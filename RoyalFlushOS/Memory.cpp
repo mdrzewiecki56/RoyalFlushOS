@@ -1,326 +1,340 @@
-// Created by Wojciech Kasperski on 15-Oct-18.
 #include "Memory.h"
-#include "PCB.h"
+#include <math.h>
 
-//------------- Konstruktory i destruktory  --------------
-MemoryManager::Page::Page(std::string data) {
-	while (data.size() < 16) data += " "; // Uzupe³nianie argumentu spacjami, jeœli jest za ma³y
-	for (int i = 0; i < 16; i++) // Przepisywanie argumentu do stronicy
-		this->data[i] = data[i];
-}
 
-MemoryManager::Page::Page() = default;
-
-PageTableData::PageTableData(bool bit, int frame) : bit(bit), frame(frame) {}
-
-PageTableData::PageTableData() {
-	this->bit = false;
-	this->frame = -1;
-};
-
-MemoryManager::FrameData::FrameData(bool isFree, int PID, int pageID, std::vector<PageTableData> *pageList) : isFree(isFree), PID(PID), pageID(pageID), pageList(pageList) {}
-
-MemoryManager::MemoryManager() {
-	for (int i = 0; i < 8; i++)
-		Frames.emplace_back(FrameData(true, -1, -1, nullptr));
-};
-
-MemoryManager::~MemoryManager() = default;
-
-//------------- Funkcje do wyœwietlania bie¿¹cych stanów pamiêci oraz pracy krokowej  --------------
-void MemoryManager::Page::print() {
-	for (auto &x : data) {
-		if (x == ' ') std::cout << "_";
-		else std::cout << x;
-	}
-	std::cout << std::endl;
-}
-
-void MemoryManager::showMem() {
-	std::cout << "RAM - PHYSICAL FRAMES CONTENT: \n";
-	std::cout << "First bit: 0 ->\t0123456789012345 -> 15 :last bit in frame\n";
+int pom = 0;
+//funkcja inicjujaca
+void MemoryManager::start() {
 	for (int i = 0; i < 128; i++) {
-		if (i % 16 == 0 && i != 0)
-			std::cout << "\nFrame no." << i / 16 << ": \t";
-		else if (i % 16 == 0)
-			std::cout << "Frame no." << i / 16 << ": \t";
-		RAM[i] != ' ' ? std::cout << RAM[i] : std::cout << '_';
+		RAM[i] = ' '; //wypelnianie RAMu spacjami
 	}
-	std::cout << std::endl;
+	std::string data = "JP 0";
+	std::vector<Page> Pvec{ Page(data) };
 }
 
-void MemoryManager::showMem(int begin, int bytes) {
-	if (begin + bytes > 128) {
-		std::cout << "Error: Number of bytes to display has excced amount of memory! \n";
-	}
+//wyswietlanie pamieci od podanego adresu i podanym zasiegu
+void MemoryManager::showPMemory(int start, int range) {
+	if (start + range > 128)
+		std::cout << "Nie mozna przeczytac pamieci podano zly zakres" << std::endl;
 	else {
-		std::cout << "Displaying physical memory from cell " << begin << " to " << begin + bytes << ":" << std::endl;
-		for (int i = begin; i < begin + bytes; i++) {
-			if (i != 0 && i % 16 == 0) std::cout << "\n";
-			RAM[i] != ' ' ? std::cout << RAM[i] : std::cout << '-';
+		std::cout << "Pamiec fizyczna od adresu " << start << " do adresu " << start + range << std::endl;
+		for (int i = start; i < range + start; i++) {
+			if (i % 16 == 0 && i != 0)
+				std::cout << std::endl;
+			if (RAM[i] != ' ')
+				std::cout << RAM[i];
+			else
+				std::cout << '_';
+
 		}
 		std::cout << std::endl;
 	}
 }
 
-void MemoryManager::showPageFile() {
-	std::cout << "-------Page File-------" << std::endl;
-	for (auto process : PageFile) {
-		std::cout << "\n**** PID:" << process.first << " ****\n";
-		//std::cout << "Pages Content:";
-		for (auto page : process.second) {
-			page.print();
-		}
-	}
-}
+//wyswietlanie calej pamieci
+void MemoryManager::showPMemory() {
+	for (int i = 0; i < 128; i++) {
+		if (i % 16 == 0)
+			std::cout << std::endl << "FRAME " << i / 16 << " ";
+		if (RAM[i] != ' ')
+			std::cout << RAM[i];
+		else
+			std::cout << '_';
 
-void MemoryManager::showPageTable(std::vector<PageTableData> *pageList) {
-	std::cout << "PAGE\t | \tFRAME \t | \tBIT \n";
-	int i = 0;
-	for (auto pageListRecord : *pageList) {
-		std::cout << i++ << "\t\t" << pageListRecord.frame << "\t\t" << pageListRecord.bit << "\n";
-	}
-}
-
-void MemoryManager::showStack() {
-	std::cout << "FIFO Stack: ";
-	for (auto frame : Stack) {
-		std::cout << frame << " ";
 	}
 	std::cout << std::endl;
 }
 
-void MemoryManager::showFrames() {
-	std::cout << "FRAMES INFO: \n";
-	std::cout << "\t\tFREE \tPAGE \tPID " << std::endl;
-	int i = 0;
-	for (auto &frame : Frames) {
-		std::cout << "Frame no." << i++ << ":\t" << frame.isFree << "\t" << frame.pageID << "\t" << frame.PID << "\n";
-	}
+//wyswietlanie tablicy stron
+void MemoryManager::showPageTable(std::vector<PageTableData> *page_table) {
+	std::cout << "FRAME\t | \tBIT" << std::endl;
+	for (int i = 0; i < page_table->size(); i++)
+		std::cout << page_table->at(i).frame << "\t | \t" << page_table->at(i).bit << std::endl;
 }
 
-//------------- Funkcje u¿ytkowe MemoryManagera  --------------
-void MemoryManager::memoryInit() {
-	for (char &cell : RAM) {
-		cell = ' ';
-	}
-	std::string data = "JMP [0];";
-	std::vector<Page> pageVector{ Page(data) };
-	PageFile.insert(std::make_pair(1, pageVector));
-}
-
-void MemoryManager::stackUpdate(int frameID) {
-	if (frameID > 7) return;
-
-	for (auto it = Stack.begin(); it != Stack.end(); it++) {
-		if (*it == frameID) {
-			Stack.erase(it);
-			break;
-		}
+int MemoryManager::LoadtoMemory(Page page, int pageN, int PID, std::vector<PageTableData> *page_table) {
+	int n = 0;
+	int Frame = -1;
+	Frame = searchForFreeFrame();
+	if (Frame == -1) //nie ma wolnych ramek
+		Frame = SwapPages(page_table, pageN, PID);
+	int end = Frame * 16 + 16;
+	for (int i = Frame * 16; i < end; i++) {
+		RAM[i] = page.data[n];
+		n++;
 	}
 
-	//Stack.push_front(frameID);
-	Stack.push_back(frameID);
+	//zmiana wartosci w tablicy stron
+	page_table->at(pageN).bit = 1;
+	page_table->at(pageN).frame = Frame;
+
+	//ustawiamy porzadek ramek i oznaczamy uzyta ramke jako zajeta
+	setFrameOrder(Frame);
+	Frames[Frame].free = 0;
+	Frames[Frame].pageN = pageN;
+	Frames[Frame].page_table = page_table;
+	Frames[Frame].PID = PID;
+
+	return Frame;
 }
 
-std::vector<PageTableData> *MemoryManager::createPageList(int mem, int PID) {
-	double pages = ceil((double)mem / 16);
-	auto *pageList = new std::vector<PageTableData>();
-
-	for (int i = 0; i < pages; i++) {
-		pageList->push_back(PageTableData(false, 0));
-	}
-
-	//Za³adowanie pierszej stronicy naszego programu do Pamiêci RAM
-	PageFile[PID].emplace_back();
-	loadToMemory(PageFile.at(PID).at(0), 0, PID, pageList);
-	//PageFile[PID].pop_back();
-
-	return pageList;
-}
-
-int MemoryManager::seekFreeFrame() {
-	int seekedFrame = -1;
-
-	for (size_t i = 0; i < Frames.size(); i++) {
-		if (Frames[i].isFree) {
-			seekedFrame = i;
-			break;
-		}
-	}
-	return seekedFrame;
-}
-
-void MemoryManager::kill(int PID) {
-	for (size_t i = 0; i < Frames.size(); i++) {
-		if (Frames[i].PID == PID) {
-			for (size_t j = i * 16; j < i * 16 + 16; j++)
-				RAM[j] = ' ';
-			stackUpdate(i);
-			Frames[i].isFree = true;
-			Frames[i].pageID = -1;
-			Frames[i].PID = -1;
-			PageFile.erase(PID);
-		}
-	}
-}
-
-int MemoryManager::loadProgram(std::string path, int mem, int PID) {
-	double pagesAmount = ceil((double)mem / 16);
-	std::fstream file(path); //Plik na dysku
-	std::string scrap; //Zmienna pomocnicza
-	std::string program; //Program w jednej linii
-	std::vector<Page> pageVector; //Wektor stronic do dodania
+int MemoryManager::LoadProgram(PCB* pcb, std::string path, int PID) {
+	std::fstream file; //plik zawierajacy program
+	std::string str; //zmienna pomocnicza
+	std::string program = ""; //caly program w jednym stringu
+	std::vector<Page> pagevec; //vector zawierajacy strony do dodania
+	int pages = 0;
+	file.open(path, std::ios::in);
 
 	if (!file.is_open()) {
-		std::cout << "Error: Can't open file! \n";
+		std::cout << "Nie moge otworzyc pliku" << std::endl;
 		return -1;
 	}
 
-	while (std::getline(file, scrap)) {
-		//Dodanie spacji zamiast koñca linii
-		if (!scrap.empty()) {
-			scrap += ";";
-			program += scrap;
+	while (std::getline(file, str)) {
+		if (!file.eof())
+			str += " ";
+		program += str;
+	}
+	str.clear();
+
+	//dzielenie programu na strony
+	for (int i = 0; i < program.size(); i++) {
+		str += program[i];
+		//tworzenie stron
+		if (str.size() == 16) {
+			pagevec.push_back(Page(str));
+			str.clear();
 		}
 	}
-	scrap.clear();
 
-	//Dzielenie programu na stronice
-	for (char i : program) {
-		scrap += i;
-		//Tworzenie Stronicy
-		if (scrap.size() == 16) {
-			pageVector.emplace_back(Page(scrap));
-			scrap.clear();
-		}
-	}
+	//ostatnia strona
+	if (str.size() != 0)
+		pagevec.push_back(Page(str));
+	str.clear();
 
-	if (!scrap.empty())
-		pageVector.emplace_back(Page(scrap));
-	scrap.clear();
-
-	if (pagesAmount * 16 < 16 * pageVector.size()) {
-		std::cout << "Error: proces nie ma przypisane wystarczajaco duzo pamieci!\n";
+	//jezeli wektor stron jest wiekszy od 8, wywala error
+	if (pagevec.size() > 8) {
+		std::cout << "Pamiec programu wychodzi poza zakres" << std::endl;
 		return -1;
 	}
 
+	//dodanie stron do pliku wymiany
+	insertToSwapFile(pagevec, PID);
 
-	//Sprawdzanie, czy program nie potrzebuje wiecej stronic w pamiêci
-	for (int i = pageVector.size(); i < pagesAmount; i++)
-		pageVector.emplace_back(scrap);
-
-	//Dodanie stronic do pliku wymiany
-	PageFile.insert(std::make_pair(PID, pageVector));
-
-	return 1;
+	pcb->page_table = (createPageTable(PID));
+	if (program.size() % 16 != 0) {
+		pages += 1;
+		pages += floor(program.size() / 16);
+	}
+	for (int i = 0; i < pages; i++) {
+		//LoadtoMemory(SwapFile.at(PID).at(i), i, PID, createPageTable(PID));
+	}
 }
 
-int MemoryManager::loadToMemory(MemoryManager::Page page, int pageID, int PID, std::vector<PageTableData> *pageList) {
+std::vector<PageTableData> *MemoryManager::createPageTable(int PID) {
+	int pages = 8;
+	int Frame = -1;
+	std::vector<PageTableData> *page_table = new std::vector<PageTableData>;
 
-	int frame = seekFreeFrame();
+	//tworzenie tablicy
+	for (int i = 0; i < pages; i++)
+		page_table->push_back(PageTableData(-1, 0));
 
-	if (frame == -1)
-		frame = insertPage(pageList, pageID, PID);
+	//zaladowanie pierwszej stronicy do RAMu
+	//LoadtoMemory(SwapFile.at(PID).at(0), 0, PID, page_table);
+	for (int i = 0; i < SwapFile.at(PID).size(); i++) {
+		LoadtoMemory(SwapFile.at(PID).at(i), i, PID, page_table);
+		if (i < SwapFile.at(PID).size() - 1) {
+			showPMemory();
+		}
+		
+	}printFIFO();
 
-	//Przepisywanie stronicy do pamiêci RAM
-	int it = 0;
-	int end = frame * 16 + 16;
-	for (int i = frame * 16; i < end; i++)
-		RAM[i] = page.data[it++];
+	return page_table;
+}
+/*
+std::string MemoryManager::Get(std::vector<PageTableData>* page_table,int PID, int LR) {
+	//string do wyslania
+	std::string order;
+	bool koniec = false;
+	int Frame = -1;
+	int stronica = LR / 16;
 
-	//Zmienianie bit'u w indeksie wymiany stronic
-	pageList->at(pageID).bit = true;
-	pageList->at(pageID).frame = frame;
+	//przekroczenie zakresu dla tego procesu
+	if (page_table->size() <= stronica) {
+		std::cout << "Przekroczenie zakresu";
+		koniec = true;
+		order = "ERROR";
+	}
+	while (!koniec) {
+		stronica = LR / 16; //stronica ktora musi znajdowac sie w pamieci
+							// koniec programu
+		if (page_table->size() <= stronica) {
+			koniec = true;
+			break;
+		}
+		//brak stronicy w pamieci operacyjnej
+		if (page_table->at(stronica).bit == 0)
+			LoadtoMemory(SwapFile[PID][stronica], stronica, PID, page_table);
 
-	//Aktualizacja stosu u¿ywalnoœci
-	stackUpdate(frame);
 
-	//Aktualizacja informacji o ramce
-	Frames[frame].isFree = false;
-	Frames[frame].pageID = pageID;
-	Frames[frame].PID = PID;
-	Frames[frame].pageList = pageList;
+		//stronica w pamieci operacyjnej
+		if (page_table->at(stronica).bit == 1) {
+			Frame = page_table->at(stronica).frame;		//ramka w ktorej pracuje
+			setFrameOrder(Frame);									//uzywam ramki wiec zmieniam jej pozycje na liscie porzadku ramek
+			if (RAM[Frame * 16 + LR - (16 * stronica)] == ' ')	//czytam do napotkania spacji
+				koniec = true;
+			else
+				order += RAM[Frame * 16 + LR - (16 * stronica)];
+		}
+		LR++;
+	}
+	return order;
+}
+*/
+void MemoryManager::Remove(int PID) {
+	for (int i = 0; i < Frames.size(); i++) {
+		if (Frames.at(i).PID == PID) { // Zerowanie pamieci RAM
+			for (int j = i * 16; j < i * 16 + 16; j++) {
+				RAM[j] = ' ';
+			}
+
+			Frames.at(i).free = 1; // Komorka znowu wolna
+			Frames.at(i).pageN = -1;
+			Frames.at(i).PID = -1;
+			SwapFile.erase(PID);
+			//delete Frames.at(i).page_table; // usuwanie tablicy stronic dla procesu
+		}
+	}
+}
+/*
+int MemoryManager::Write(PCB *process, int adress, std::string data) {
+	int stronica = adress / 16;
+	std::string str;
+
+	if (data.size() == 0) {
+		return 1;
+	}
+
+	if (adress + data.size() - 1 > process->page_table->size() * 16 - 1 || adress < 0) {
+		std::cout << "Przekroczono zakres dla tego procesu" << std::endl;
+		return -1;
+	}
+
+	for (int i = 0; i < data.size(); i++) {
+		stronica = (adress + i) / 16;
+		if (process->page_table->at(stronica).bit == 0)
+			LoadtoMemory(SwapFile[process->PID][stronica], stronica, process->PID, process->page_table);
+
+		RAM[process->page_table->at(stronica).frame * 16 + adress + i - (16 * stronica)] = data[i];
+		setFrameOrder(process->page_table->at(stronica).frame);
+	}
+	return 1;
+}
+*/
+int MemoryManager::SwapPages(std::vector<PageTableData>* page_table, int pageNumber, int PID)
+{
+	std::list<int>::iterator victim = FrameOrder.begin();
+
+	int frame = *victim;
+
+	for (int i = frame * 16; i < frame * 16 + 16; i++)
+	{
+		SwapFile[Frames[frame].PID][Frames[frame].pageN].data[i - (frame * 16)] = RAM[i];
+	}
+
+	Frames[frame].page_table->at(Frames[frame].pageN).bit = 0;
+	Frames[frame].page_table->at(Frames[frame].pageN).frame = -1;
 
 	return frame;
 }
 
-std::string MemoryManager::get(PCB *process, int LADDR) {
-	std::string response;
-	bool reading = true;
-	int Frame = -1;
-	unsigned int PageID = LADDR / 16;
-
-	//przekroczenie zakres dla tego procesu
-	if (process->pageList->size() <= PageID) {
-		std::cout << "Error: Exceeded memory range!";
-		reading = false;
-		response = "ERROR";
-	}
-
-	while (reading) {
-		PageID = LADDR / 16; //Numer stronicy w pamiêci
-
-		if (process->pageList->size() <= PageID) {
-			reading = false;
+int MemoryManager::searchForFreeFrame()
+{
+	int free_frame = -1; //nie ma wolnej
+	for (int i = 0; i < Frames.size(); i++)
+	{
+		if (Frames[i].free == 1) {
+			free_frame = i;
 			break;
 		}
+	}
+	return free_frame;
+}
 
-		//Sprawdza, czy stronica znajduje siê w pamiêci operacyjnej
-		if (!process->pageList->at(PageID).bit)
-			loadToMemory(PageFile[process->PID][PageID], PageID, process->PID, process->pageList);
-
-		if (process->pageList->at(PageID).bit) {
-			Frame = process->pageList->at(PageID).frame;//Bie¿¹co u¿ywana ramka
-
-			//stackUpdate(Frame);//Ramka zosta³a u¿yta, wiêc trzeba zaktualizowaæ stos
-
-			if (RAM[Frame * 16 + LADDR - (16 * PageID)] == ';') //Odczytywanie do napotkania spacji
-				reading = false;
-			else
-				response += RAM[Frame * 16 + LADDR - (16 * PageID)];
+//JEST GIT
+void MemoryManager::setFrameOrder(int frame)
+{
+	/*bool in_memory = false;
+	for (std::list<int>::iterator it = FrameOrder.begin(); it != FrameOrder.end(); it++)
+	{
+		if (*it == frame)
+		{
+			in_memory = true;
+			break;
 		}
-		LADDR++;
-	}
+	}*/
 
-	return response;
+	if (FrameOrder.size() < 8)
+	{
+		//if (in_memory == false)
+		{
+			FrameOrder.push_back(frame);
+		}
+	}
+	else if (FrameOrder.size() >= 8)
+	{
+		//if (in_memory == false)
+		{
+			FrameOrder.erase(FrameOrder.begin());
+			FrameOrder.push_back(frame);
+		}
+	}
 }
 
-int MemoryManager::write(PCB *process, int adress, std::string data) {
-
-	if (data.empty()) return 1;
-
-	if (adress + data.size() - 1 > process->pageList->size() * 16 - 1 || adress < 0) {
-		std::cout << "Error: Exceeded memory amount for this process! \n";
-		return -1;
+//JEST GIT
+void MemoryManager::printFIFO()
+{
+	std::cout << "Frame Order (FIFO): ";
+	for (std::list<int>::iterator it = FrameOrder.begin(); it != FrameOrder.end(); it++)
+	{
+		std::cout << *it << " ";
 	}
-
-	int pageID;
-	for (size_t i = 0; i < data.size(); i++) {
-		pageID = (adress + i) / 16;
-		if (process->pageList->at(pageID).bit == 0)
-			loadToMemory(PageFile[process->PID][pageID], pageID, process->PID, process->pageList);
-		RAM[process->pageList->at(pageID).frame * 16 + adress + i - (16 * pageID)] = data[i];
-
-		//stackUpdate(process->pageList->at(pageID).frame);
-	}
-	return 1;
+	std::cout << std::endl;
 }
 
-//TODO: ZROBIC FIFIO
-int MemoryManager::insertPage(std::vector<PageTableData> *pageList, int pageID, int PID) {
-	//*it numer ramki ktora jest ofiara
-	auto it = Stack.begin();
-	// auto it = Stack.end(); it--;
-	int Frame = *it;
-	// Przepisuje zawartosc z ramki ofiary do Pliku wymiany
-	for (int i = Frame * 16; i < Frame * 16 + 16; i++) {
-		PageFile[Frames[Frame].PID][Frames[Frame].pageID].data[i - (Frame * 16)] = RAM[i];
+//NIE WIEM
+void MemoryManager::printSwapFile()
+{
+	int i = 0;
+	std::cout << "Swap File: " << std::endl;
+
+	for (auto x : SwapFile)
+	{
+		std::cout << "PROCESS ID: " << x.first << std::endl;
+		for (int i = 0; i < x.second.size(); i++) {
+			x.second.at(i).print();
+		}
 	}
-
-	//Zmieniam wartosci w tablicy stronic ofiary
-	Frames[Frame].pageList->at(Frames[Frame].pageID).bit = false;
-	Frames[Frame].pageList->at(Frames[Frame].pageID).frame = -1;
-
-	return Frame;
 }
+
+//NIE WIEM
+void MemoryManager::insertToSwapFile(std::vector<Page> pagevec, int PID)
+{
+	SwapFile.insert(std::make_pair(PID, pagevec));
+}
+/*
+int main()
+{
+	MemoryManager mem;
+	mem.start();
+	mem.LoadProgram("program.txt", 2);
+	mem.printSwapFile();
+	mem.showPageTable(mem.createPageTable(2));
+	mem.showPMemory();
+
+	getchar();
+	return 0;
+}
+*/

@@ -16,7 +16,7 @@ public:
 	std::string name;										//nazwa procesu
 	int PID;												//unikalny identyfikator procesu
 	std::shared_ptr<PCB> parent;							//wskaznik na rodzica
-	std::vector<PCB*> children;								//wektor zawierajacy wskazniki na dzieci
+	std::vector<std::shared_ptr<PCB>> children;							//wektor zawierajacy wskazniki na dzieci
 	process_state state;									//stan procesu								
 	std::vector<PageTableData>* page_table;					//wektor stronic (Michal)
 	std::string file_name;									//nazwa pliku w ktorym znajduje sie proces

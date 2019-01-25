@@ -19,9 +19,9 @@ Interpreter::Interpreter(PCB* process, MemoryManager* manager, dysk* disk, Proce
 std::string Interpreter::getCommand()
 {
 	std::string command;
-	//funkcja z pamieci
-	//command = mm->nullptr;
-
+	command = mm->Get(this->pcb, this->pcb->get_command_counter());
+	this->pcb->command_counter+=command.length() + 1;
+	std::cout << "Komenda:" << command<< std::endl;
 	return command;
 }
 char Interpreter::readByte(std::string &command)
@@ -30,7 +30,6 @@ char Interpreter::readByte(std::string &command)
 		return ' ';
 	char ch = command[0];
 	command.erase(0, 1);
-	//this->counter++;
 	//std::cout << ch << std::endl;
 
 	return ch;
@@ -95,21 +94,44 @@ std::pair<int, int>  Interpreter::prepareCommand(std::string &command)
 	return std::make_pair(99, 0);
 
 }
+//na podstawie parametrow z bazy pobiera argumenty
+std::string Interpreter::getArguments(std::pair<int, int> parameters)
+{
+	std::string arg1, arg2;
+	for (int i = 0; i < parameters.second; i++)
+	{
+		if (i == 0)
+		{
+			arg1 += mm->Get(this->pcb, this->pcb->get_command_counter());
+			arg1 += " ";
+			this->pcb->command_counter += arg1.length();
+		}
+		else
+		{
+			arg2 += mm->Get(this->pcb, this->pcb->get_command_counter());
+			this->pcb->command_counter += arg2.length()+1;
+		}
+
+	}
+	std::cout << "Argumenty:" << arg1 <<", " <<arg2 << std::endl;
+	
+	return (arg1 + arg2);
+}
+
 
 //teraz funkcja ktora na podstawie pary wyzej odyczta argumenty funkcji tu znajduje sie poki co lista funckji
-std::vector<std::string> Interpreter::getArguments(std::string &command, std::pair<int, int> parameters)
+std::vector<std::string> Interpreter::prepareArguments(std::string &arguments, std::pair<int, int> parameters)
 {
 	std::vector<std::string> arguments_string;
 	std::string tmp;
 	int argumentsConverted = 0;
 	char ch;
-	readByte(command);
 	while (argumentsConverted != parameters.second)
 	{
 		//std::cout << std::endl << command << std::endl;
 		do
 		{
-			ch = readByte(command);
+			ch = readByte(arguments);
 			//std::cout << ch << std::endl;
 			if (ch != ' ')
 				tmp += ch;
@@ -427,10 +449,12 @@ void writeMemory(const std::string register, const std::string mem_str)
 //do obrobki
 void Interpreter::selectFunction(const std::pair<int, int >&  CommandParameters, const std::vector<std::string>& Arguments)
 {
-	if (CommandParameters.second == 2)
-		this->pcb->command_counter += 2 + 1 + Arguments[0].length() + 1 + Arguments[1].length() + 1;
-	if (CommandParameters.second == 1)
-		this->pcb->command_counter += 2 + 1 + Arguments[0].length() + 1;
+	std::cout << "Parametry: " << CommandParameters.first << "," << CommandParameters.second << std::endl;
+	for (auto i : Arguments)
+	{
+		std::cout << i << std::endl;
+	}
+	
 	int value;
 	switch (CommandParameters.first)
 	{
@@ -536,7 +560,8 @@ void Interpreter::selectFunction(const std::pair<int, int >&  CommandParameters,
 	case 23://SP = Koniec programu
 		//end();
 		break;
-
+	case 98:
+		break;
 		//INNE
 	case 99:
 		throw "Nieznana Komenda!";
@@ -558,11 +583,11 @@ void Interpreter::printState()
 void Interpreter::interpretation(std::string &command)
 {
 	std::pair<int, int> prep = prepareCommand(command);
-	//std::cout << prep.first << " " << prep.second;
-	std::vector<std::string> args = getArguments(command, prep);
+	std::string arg_string = getArguments(prep);
+	std::vector<std::string> args = prepareArguments(arg_string, prep);
 	//std::cout << args[0] << " " << args[1];
 	//std::cout << std::endl << prep.first;
-	if (prep.first == 19)
+	/*if (prep.first == 19)
 	{
 		command = this->command_cp.substr(stoi(args[0]));
 	}
@@ -600,22 +625,27 @@ void Interpreter::interpretation(std::string &command)
 	}
 	selectFunction(prep, args);
 	pcb->command_counter += 2;
-
+	*/
 	/*if (args.size() == 1)
 		this->counter+= 3 + args[0].length();
 	if (args.size() == 2)
 		this->counter += 3 + args[0].length() + 1 + args[1].length();
 	printState();*/
 	//std::cout << command << std::endl;
+	selectFunction(prep, args);
 	printState();
+	
 }
 
 void Interpreter::fullInterpretation()
 {
-	std::string command = getCommand();
+	std::string command;
 	while (command != "SP")
 	{
-		interpretation(command);
+		command = getCommand();
+		if (command != "SP")
+			interpretation(command);
+		std::cout << "Counter: " << this->pcb->command_counter << std::endl;
 		pcb->real_time++;
 	}
 	

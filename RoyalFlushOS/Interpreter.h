@@ -8,6 +8,7 @@
 #include "ProcessManager.h"
 #include "Memory.h"
 #include "PCB.h"
+#include "Shell.h"
 #include <memory>
 
 class Interpreter
@@ -20,9 +21,10 @@ private:
 
 	std::string getCommand();
 	char static readByte(std::string &command);	//Czyta jeden znak rozkazu
-	std::pair<int, int> static prepareCommand(std::string & command); //Odczytuje z komendy jej id i liczbe argumentow
+	std::pair<int, int> static prepareCommand(std::string &command); //Odczytuje z komendy jej id i liczbe argumentow
 
-	std::vector<std::string> static getArguments(std::string & command, std::pair<int, int> parameters); //pobiera argumenty w stringach z rozkazu
+	std::string getArguments(std::pair<int, int> parameters);
+	std::vector<std::string> static prepareArguments(std::string &arguments, std::pair<int, int> parameters); //pobiera argumenty w stringach z rozkazu
 
 	void add(std::string reg, int value); //dodawanko
 	void add(std::string reg, std::string address);

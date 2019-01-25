@@ -75,7 +75,7 @@ int MemoryManager::LoadtoMemory(Page page, int pageN, int PID, std::vector<PageT
 	return Frame;
 }
 
-int MemoryManager::LoadProgram(std::string path, int PID) {
+int MemoryManager::LoadProgram(std::string path, int PID, PCB *pcb) {
 	std::fstream file; //plik zawierajacy program
 	std::string str; //zmienna pomocnicza
 	std::string program; //caly program w jednym stringu
@@ -117,6 +117,8 @@ int MemoryManager::LoadProgram(std::string path, int PID) {
 
 	//dodanie stron do pliku wymiany
 	insertToSwapFile(pagevec, PID);
+	pcb->page_table = createPageTable(PID);
+	
 }
 
 std::vector<PageTableData> *MemoryManager::createPageTable(int PID) {
@@ -163,7 +165,7 @@ std::string MemoryManager::Get(PCB *process, int LR) {
 		if (process->page_table->at(stronica).bit == 1) {
 			Frame = process->page_table->at(stronica).frame;		//ramka w ktorej pracuje
 			setFrameOrder(Frame);									//uzywam ramki wiec zmieniam jej pozycje na liscie porzadku ramek
-			if (RAM[Frame * 16 + LR - (16 * stronica)] == ';')	//czytam do napotkania spacji
+			if (RAM[Frame * 16 + LR - (16 * stronica)] == ' ')	//czytam do napotkania spacji
 				koniec = true;
 			else
 				order += RAM[Frame * 16 + LR - (16 * stronica)];

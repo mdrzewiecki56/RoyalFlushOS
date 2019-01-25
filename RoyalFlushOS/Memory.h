@@ -79,7 +79,7 @@ public:
 
 	//funkcja uruchamiajaca procedure ladowania programu
 	//pierwsza strona zostaje zaladowana do RAMu, reszta do pliku wymiany
-	int LoadProgram(std::string path, int PID);
+	int LoadProgram(std::string path, int PID, PCB *pcb);
 
 	std::string Get(PCB *process, int LR);
 

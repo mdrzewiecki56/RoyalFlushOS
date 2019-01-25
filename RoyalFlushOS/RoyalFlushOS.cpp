@@ -12,7 +12,7 @@ void intro();
 
 int main()
 {
-	intro();
+	//intro();
 	
 	Shell shell;
 	shell.run();

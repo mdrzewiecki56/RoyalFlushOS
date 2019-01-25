@@ -43,7 +43,7 @@ public:
 	Scheduler scheduler;
 
 	/*METODY G£ÓWNE*/
-	void run(); //dzialanie programu
+	 void run(); //dzialanie programu
 	void command(); //obsluga komand
 	void switch_case();
 

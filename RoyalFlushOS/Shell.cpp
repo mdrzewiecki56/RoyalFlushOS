@@ -126,20 +126,20 @@ void Shell::command() {
 }
 
 
-void Shell::run()
+ void Shell::run()
 {
-	this->mem->start();
-	this->mng->get_process("dummy")->set_state(Ready);
-	scheduler.add(this->mng->get_process("dummy").get());
-	scheduler.run();
-	scheduler.dummy = this->mng->get_process("dummy").get();
-	this->mem->LoadProgram(this->mng->get_process("dummy").get(), this->mng->get_process("dummy").get()->file_name, this->mng->get_process("dummy").get()->PID);//wczytanie dummy do ram
+	//this->mem->start();
+	//this->mng->get_process("dummy")->set_state(Ready);
+	//scheduler.add(this->mng->get_process("dummy").get());
+	//scheduler.run();
+	//scheduler.dummy = this->mng->get_process("dummy").get();
+	//this->mem->LoadProgram("dummy.txt", mng->get_process("dummy")->PID, scheduler.already_running);	//wczytanie dummy do ram
 
 	do {
 
 		std::cout << "::> ";                                   // wypisanie naszego "znaku poczatku komendy" - czy jak to nazwac
 		command_line.clear();                                    // wyczyszczenie command_line z poprzedniej komendy (tej ktora zostala wykonana)
-		while (command_line.size() <= 0)                         // jezeli ktos podal np. "||" jako nazwe funkcji, to petla sie powtarza lub jesli sa jakies nieprawidlowe parametry
+		while (command_line.size() <= 0)    //chujowykod                     // jezeli ktos podal np. "||" jako nazwe funkcji, to petla sie powtarza lub jesli sa jakies nieprawidlowe parametry
 		{
 			command();                                           // wywolanie funkcji pobierajacej komende od uzytkownika
 		}
@@ -461,14 +461,14 @@ void Shell::switch_case()
 				scheduler.remove(Waiting);
 				//mem.LoadProgram(mng.get_process(command_line[1]).get(), mng.get_process(command_line[1]).get()->file_name, mng.get_process(command_line[1])->PID);
 				//this is alternative function of the upper f.
-				this->mem->LoadProgram(scheduler.already_running, scheduler.already_running->file_name, scheduler.already_running->PID);
+				this->mem->LoadProgram(scheduler.already_running->file_name, scheduler.already_running->PID,scheduler.already_running);
 
 				//mem.showPageTable(mem.createPageTable(mng.get_process(command_line[1])->PID));
 				this->mem->showPMemory();
 				this->mem->printSwapFile();
 
 
-				Interpreter interpreter(this->mng->get_process(scheduler.already_running->name).get(), this->mem.get(), this->disk.get(), this->mng.get());
+				Interpreter interpreter( this->mng->get_process(scheduler.already_running->name).get(), this->mem.get(), this->disk.get(), this->mng.get());
 				//std::cout<<interpreter.pcb->predicted_time;
 				interpreter.fullInterpretation();
 				scheduler.remove(Terminated);
@@ -489,7 +489,7 @@ void Shell::switch_case()
 
 
 					//std::cout << "already running" << scheduler.already_running->name << "\n";
-					this->mem->LoadProgram(scheduler.already_running, scheduler.already_running->file_name, scheduler.already_running->PID);
+					this->mem->LoadProgram(scheduler.already_running->file_name, scheduler.already_running->PID,scheduler.already_running);
 					//mem.LoadProgram(scheduler.already_running, scheduler.already_running->file_name, scheduler.already_running->PID);
 					//mem.showPageTable(mem.createPageTable(mng.get_process(command_line[1])->PID));
 					this->mem->showPMemory();
@@ -649,7 +649,12 @@ void Shell::exit()
 
 Shell::Shell()
 {
-
+	this->mem->start();
+	this->mng->get_process("dummy")->set_state(Ready);
+	scheduler.add(this->mng->get_process("dummy").get());
+	scheduler.run();
+	scheduler.dummy = this->mng->get_process("dummy").get();
+	this->mem->LoadProgram("dummy.txt", mng->get_process("dummy")->PID, scheduler.already_running);
 }
 
 

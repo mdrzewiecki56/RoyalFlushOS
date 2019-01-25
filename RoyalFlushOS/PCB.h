@@ -12,7 +12,7 @@ enum process_state { New = 0, Ready = 1, Running = 2, Waiting = 3, Terminated = 
 
 class PCB
 {
-public:
+public:	
 	std::string name;										//nazwa procesu
 	int PID;												//unikalny identyfikator procesu
 	std::shared_ptr<PCB> parent;							//wskaznik na rodzica

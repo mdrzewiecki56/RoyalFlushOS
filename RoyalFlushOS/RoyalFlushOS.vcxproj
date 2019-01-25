@@ -115,6 +115,37 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="dysk.h" />
+    <ClInclude Include="Help.h" />
+    <ClInclude Include="inode.h" />
+    <ClInclude Include="Interpreter.h" />
+    <ClInclude Include="Memory.h" />
+    <ClInclude Include="PCB.h" />
+    <ClInclude Include="ProcessManager.h" />
+    <ClInclude Include="Scheduler.h" />
+    <ClInclude Include="Semaphore.h" />
+    <ClInclude Include="Shell.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="dysk.cpp" />
+    <ClCompile Include="Help.cpp" />
+    <ClCompile Include="inode.cpp" />
+    <ClCompile Include="Interpreter.cpp" />
+    <ClCompile Include="Memory.cpp" />
+    <ClCompile Include="RoyalFlushOS.cpp" />
+    <ClCompile Include="PCB.cpp" />
+    <ClCompile Include="ProcessManager.cpp" />
+    <ClCompile Include="Scheduler.cpp" />
+    <ClCompile Include="Semaphore.cpp" />
+    <ClCompile Include="Shell.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="add_from_file.txt" />
+    <Text Include="arytmetyka.txt" />
+    <Text Include="cpkp.txt" />
+    <Text Include="dummy.txt" />
+    <Text Include="Factorial.txt" />
+    <Text Include="program.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

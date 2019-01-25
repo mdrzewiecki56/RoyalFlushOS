@@ -14,96 +14,14 @@ Interpreter::Interpreter(PCB* process, MemoryManager* manager, dysk* disk, Proce
 	this->pcb = process;
 	this->mm = manager;
 	this->pm = pm;
-	//this->disk->show_data_container();
 }
-std::string Interpreter::Get(std::vector<PageTableData>* page_table, int PID, int LR) {
-	//string do wyslania
-	std::string order;
-	bool koniec = false;
-	int Frame = -1;
-	int stronica = LR / 16;
-
-	//przekroczenie zakresu dla tego procesu
-	if (page_table->size() <= stronica) {
-		std::cout << "Przekroczenie zakresu";
-		koniec = true;
-		order = "ERROR";
-	}
-	while (!koniec) {
-		stronica = LR / 16; //stronica ktora musi znajdowac sie w pamieci
-							// koniec programu
-		if (page_table->size() <= stronica) {
-			koniec = true;
-			break;
-		}
-		//brak stronicy w pamieci operacyjnej
-		if (page_table->at(stronica).bit == 0) {
-			this->mm->LoadtoMemory(this->mm->SwapFile[PID][stronica], stronica, PID, page_table);
-		}
-
-
-		//stronica w pamieci operacyjnej
-		if (page_table->at(stronica).bit == 1) {
-			Frame = page_table->at(stronica).frame;		//ramka w ktorej pracuje
-			//this->mm->setFrameOrder(Frame);									//uzywam ramki wiec zmieniam jej pozycje na liscie porzadku ramek
-			if (mm->RAM[Frame * 16 + LR - (16 * stronica)] == 'S' && mm->RAM[Frame * 16 + LR - (16 * stronica) + 1] == 'P') {//czytam do napotkania spacji
-				koniec = true;
-			}
-			else {
-				order += mm->RAM[Frame * 16 + LR - (16 * stronica)];
-			}
-		}
-		//std::cout << LR;
-		LR++;
-
-	}
-	order += mm->RAM[Frame * 16 + LR - (16 * stronica) + 1];
-	//std::cout << order;
-	order = order.substr(0, order.size() - 1);
-	order += "SP";
-	return order;
-}
-
-
-
-
 
 std::string Interpreter::getCommand()
 {
-	/*
 	std::string command;
-	int i = this->counter;
-	while (true)
-	{
-		command += RAM[i];
-		//std::cout << RAM[i] << std::endl;
-		i++;
-		if ((RAM[i] == 'S') && (RAM[i + 1] == 'P'))
-		{
-			command += "SP";
-			break;
-		}
+	//funkcja z pamieci
+	//command = mm->nullptr;
 
-	}
-	//std::cout << command <<std::endl;
-	this->fullCommand = command;
-	return command;
-	*/
-	std::string command;
-	//bool przel = true;
-		//mm->showPageTable(this->pcb->page_table);
-	/*while (przel)
-	{
-		command += Get(pcb->page_table, pcb->PID, 0);
-		std::cin >> przel;
-	}
-	*/
-
-	/*while(!std::regex_match(command,std::regex(".*SP")));*/
-	command += Get(pcb->page_table, pcb->PID, 0);
-	//std::cout << "Komenda w interpretku <3 : [" << command << "]";
-
-	this->command_cp = command;
 	return command;
 }
 char Interpreter::readByte(std::string &command)

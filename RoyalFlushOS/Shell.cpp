@@ -471,79 +471,105 @@ void Shell::switch_case()
 	}
 
 	case Shell::spis_funkcji::RUNPROCESS:
+
 	{
-		if (command_line.size() == 1 || (command_line.size() == 2 && command_line[1] == "/?")) {
-			help_class.RUNPROCESS_H();
-		}
-		else if(command_line.size() == 2){
-
-			
-
-			
-				this->mng->get_process(command_line[1])->set_state(Ready);
-				scheduler.add(this->mng->get_process(command_line[1]).get());
-				scheduler.print_queue();
-				scheduler.remove(Waiting);
-				//mem.LoadProgram(mng.get_process(command_line[1]).get(), mng.get_process(command_line[1]).get()->file_name, mng.get_process(command_line[1])->PID);
-				//this is alternative function of the upper f.
-				this->mem->LoadProgram(scheduler.already_running->file_name, scheduler.already_running->PID,scheduler.already_running);
-
-				//mem.showPageTable(mem.createPageTable(mng.get_process(command_line[1])->PID));
-				this->mem->showPMemory();
-				this->mem->printSwapFile();
-
-
-				Interpreter interpreter( this->mng->get_process(scheduler.already_running->name).get(), this->mem.get(), this->disk.get(), this->mng.get());
-				//std::cout<<interpreter.pcb->predicted_time;
-				
-				
-				while (interpreter.interpretation())
-				{
-					this->run();
-					this->running = true;
+		
+		if (this->mng->get_process(command_line[1]).get() != nullptr) {
+			if (scheduler.already_running->predicted_time > this->mng->get_process(command_line[1]).get()->predicted_time) {
+				if (command_line.size() == 1 || (command_line.size() == 2 && command_line[1] == "/?")) {
+					help_class.RUNPROCESS_H();
 				}
-				
-				scheduler.remove(Terminated);
-				//std::cout << "scheduler" << scheduler.dummy->predicted_time;
-			
-		}
-		else if (command_line.size() > 2) {
-			
-				for (int i = 1; i < command_line.size(); i++) {
-					scheduler.add(this->mng->get_process(command_line[i]).get());
-					this->mng->get_process(command_line[i])->set_state(Ready);
-					//std::cout << "wywolalem sie";
-				}
-				scheduler.remove(Waiting);
-				for (int i = 1; i < command_line.size(); i++) {
+				else if (command_line.size() == 2) {
 
 
+					this->mng->get_process(command_line[1])->set_state(Ready);
+					scheduler.add(this->mng->get_process(command_line[1]).get());
+					scheduler.print_queue();
+					scheduler.remove(Waiting);
+					this->mem->LoadProgram(scheduler.already_running->file_name, scheduler.already_running->PID, scheduler.already_running);
 
-
-					//std::cout << "already running" << scheduler.already_running->name << "\n";
-					this->mem->LoadProgram(scheduler.already_running->file_name, scheduler.already_running->PID,scheduler.already_running);
-					//mem.LoadProgram(scheduler.already_running, scheduler.already_running->file_name, scheduler.already_running->PID);
 					//mem.showPageTable(mem.createPageTable(mng.get_process(command_line[1])->PID));
 					this->mem->showPMemory();
 					this->mem->printSwapFile();
 
 
-
-					Interpreter interpreter(scheduler.already_running, this->mem.get(), this->disk.get(), this->mng.get());
+					Interpreter interpreter(this->mng->get_process(scheduler.already_running->name).get(), this->mem.get(), this->disk.get(), this->mng.get());
 					//std::cout<<interpreter.pcb->predicted_time;
-					//interpreter.fullInterpretation();
-					scheduler.remove(Terminated);
+
+
+					while (interpreter.interpretation())
+					{
+						this->run();
+						this->running = true;
+					}scheduler.remove(Terminated);
+					if (scheduler.already_running->name != "dummy" && counter1!=0) {
+						
+
+						//this->mem->LoadProgram(scheduler.already_running->file_name, scheduler.already_running->PID, scheduler.already_running);
+
+						////mem.showPageTable(mem.createPageTable(mng.get_process(command_line[1])->PID));
+						//this->mem->showPMemory();
+						//this->mem->printSwapFile();
+
+
+						//Interpreter interpreter(this->mng->get_process(scheduler.already_running->name).get(), this->mem.get(), this->disk.get(), this->mng.get());
+						////std::cout<<interpreter.pcb->predicted_time;
+
+
+						//while (interpreter.interpretation())
+						//{
+						//	this->run();
+						//	this->running = true;
+						//}scheduler.remove(Terminated);
+					}
 					//std::cout << "scheduler" << scheduler.dummy->predicted_time;
+
 				}
-			
+				else if (command_line.size() > 2) {
+
+					for (int i = 1; i < command_line.size(); i++) {
+						scheduler.add(this->mng->get_process(command_line[i]).get());
+						this->mng->get_process(command_line[i])->set_state(Ready);
+						//std::cout << "wywolalem sie";
+					}
+					scheduler.remove(Waiting);
+					for (int i = 1; i < command_line.size(); i++) {
+
+
+
+
+						//std::cout << "already running" << scheduler.already_running->name << "\n";
+						this->mem->LoadProgram(scheduler.already_running->file_name, scheduler.already_running->PID, scheduler.already_running);
+						//mem.LoadProgram(scheduler.already_running, scheduler.already_running->file_name, scheduler.already_running->PID);
+						//mem.showPageTable(mem.createPageTable(mng.get_process(command_line[1])->PID));
+						this->mem->showPMemory();
+						this->mem->printSwapFile();
+
+
+
+						Interpreter interpreter(scheduler.already_running, this->mem.get(), this->disk.get(), this->mng.get());
+						//std::cout<<interpreter.pcb->predicted_time;
+						//interpreter.fullInterpretation();
+						scheduler.remove(Terminated);
+						//std::cout << "scheduler" << scheduler.dummy->predicted_time;
+					}
+
+				}
+
+
+				else
+				{
+					help_class.HELP_F();
+				}
+				break;
+			}
+			else {
+				counter1++;
+				this->mng->get_process(command_line[1])->set_state(Ready);
+				scheduler.add(this->mng->get_process(command_line[1]).get());
+				scheduler.print_queue();
+			}
 		}
-		
-		
-		else
-		{
-			help_class.HELP_F();
-		}
-		break;
 	}
 	case Shell::spis_funkcji::SHOWLIST:
 	{
@@ -672,7 +698,10 @@ void Shell::switch_case()
 
 	}
 }
+void runprocess(std::vector<std::string>command_line) {
 
+
+}
 
 void Shell::exit()
 {

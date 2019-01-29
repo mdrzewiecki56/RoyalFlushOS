@@ -26,6 +26,7 @@ private:
 	/*STRUKTURY DANYCH*/
 	bool running=true; //warunek dzialania programu
 	bool first_dummy_run = false;
+	int counter1 = 0;//dont carry about this but dont touch
 	std::vector<std::string> command_line; //komenda
 	enum spis_funkcji {
 		CREATEFILE, READFILE, WRITEFILE, DELETEFILE, RENAMEFILE, COPYFILE, DISPLAYFILE,
@@ -47,6 +48,7 @@ public:
 	 void run(); //dzialanie programu
 	void command(); //obsluga komand
 	void switch_case();
+	void runprocess(std::vector<std::string>command_line);
 	/*PRACA KROKOWA*/ //by SA A.Dokowicz
 	void go();
 	/*FORMATOWANIE LINII*/

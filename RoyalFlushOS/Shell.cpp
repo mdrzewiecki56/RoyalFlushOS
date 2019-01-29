@@ -11,7 +11,7 @@ Shell::spis_funkcji Shell::str_to_int(const std::string & funkcja) {
 	else if (funkcja == "FD") return FORMATDISK;
 	else if (funkcja == "DD") return DISPLAYDISK;
 	else if (funkcja == "SD") return SHOWDIRECTORY;
-
+	
 	/// MEMORY
 	else if (funkcja == "DMEMORY") return SHOWMEMORY;
 	/// PROCESS
@@ -26,7 +26,7 @@ Shell::spis_funkcji Shell::str_to_int(const std::string & funkcja) {
 	else if (funkcja == "RUNTIME") return RUNTIME;
 	/// INTERPRETER
 	//else if (Funkcja == "GO") return GO;
-
+	else if (funkcja == "GO") return GO;
 	/// HELP
 	else if (funkcja == "CLS") return CLS;
 	else if (funkcja == "HELP") return HELP;
@@ -92,6 +92,28 @@ void Shell::credits()
 	std::cout << "Semaphores - Wojciech Mlynczak\n" << std::endl;
 }
 
+void Shell::rundummy()
+{
+	this->first_dummy_run = true;
+	this->mng->get_process("dummy")->set_state(Ready);
+	scheduler.add(this->mng->get_process("dummy").get());
+	scheduler.run();
+	scheduler.dummy = this->mng->get_process("dummy").get();
+	this->mem->LoadProgram("dummy.txt", mng->get_process("dummy")->PID, scheduler.already_running);
+	scheduler.print_queue();
+	this->mem->showPMemory();
+	this->mem->printSwapFile();
+	Interpreter interpreter(this->mng->get_process(scheduler.already_running->name).get(),this->mem.get(),this->disk.get(),this->mng.get());
+	while (interpreter.interpretation())
+	{
+		this->run();
+		this->running = true;
+	}
+
+	scheduler.remove(Terminated);
+}
+
+
 
 
 void Shell::command() {
@@ -128,6 +150,9 @@ void Shell::command() {
 
  void Shell::run()
 {
+	 if (!this->first_dummy_run) {
+		 this->rundummy();
+	 }
 	//this->mem->start();
 	//this->mng->get_process("dummy")->set_state(Ready);
 	//scheduler.add(this->mng->get_process("dummy").get());
@@ -470,7 +495,14 @@ void Shell::switch_case()
 
 				Interpreter interpreter( this->mng->get_process(scheduler.already_running->name).get(), this->mem.get(), this->disk.get(), this->mng.get());
 				//std::cout<<interpreter.pcb->predicted_time;
-				interpreter.fullInterpretation();
+				
+				
+				while (interpreter.interpretation())
+				{
+					this->run();
+					this->running = true;
+				}
+				
 				scheduler.remove(Terminated);
 				//std::cout << "scheduler" << scheduler.dummy->predicted_time;
 			
@@ -499,7 +531,7 @@ void Shell::switch_case()
 
 					Interpreter interpreter(scheduler.already_running, this->mem.get(), this->disk.get(), this->mng.get());
 					//std::cout<<interpreter.pcb->predicted_time;
-					interpreter.fullInterpretation();
+					//interpreter.fullInterpretation();
 					scheduler.remove(Terminated);
 					//std::cout << "scheduler" << scheduler.dummy->predicted_time;
 				}
@@ -622,6 +654,11 @@ void Shell::switch_case()
 		exit();
 		break;
 	}
+	case Shell::spis_funkcji::GO:
+	{
+		running = false;
+		break;
+	}
 	case Shell::spis_funkcji::CREDITS:
 	{
 		credits();
@@ -650,11 +687,7 @@ void Shell::exit()
 Shell::Shell()
 {
 	this->mem->start();
-	this->mng->get_process("dummy")->set_state(Ready);
-	scheduler.add(this->mng->get_process("dummy").get());
-	scheduler.run();
-	scheduler.dummy = this->mng->get_process("dummy").get();
-	this->mem->LoadProgram("dummy.txt", mng->get_process("dummy")->PID, scheduler.already_running);
+	
 }
 
 

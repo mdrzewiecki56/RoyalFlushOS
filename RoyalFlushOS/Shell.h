@@ -25,6 +25,7 @@ private:
 
 	/*STRUKTURY DANYCH*/
 	bool running=true; //warunek dzialania programu
+	bool first_dummy_run = false;
 	std::vector<std::string> command_line; //komenda
 	enum spis_funkcji {
 		CREATEFILE, READFILE, WRITEFILE, DELETEFILE, RENAMEFILE, COPYFILE, DISPLAYFILE,
@@ -32,7 +33,7 @@ private:
 		CREATEPROCESS, RUNPROCESS, DELETEPROCESS, SHOWLIST, SHOWPCB,
 		PQUEUE, RUNTIME,
 		SHOWMEMORY,
-		HELP, OTHER, CLS, EXIT, CREDITS
+		HELP, OTHER, CLS, EXIT, CREDITS, GO
 	};
 
 	Help help_class;
@@ -46,7 +47,8 @@ public:
 	 void run(); //dzialanie programu
 	void command(); //obsluga komand
 	void switch_case();
-
+	/*PRACA KROKOWA*/ //by SA A.Dokowicz
+	void go();
 	/*FORMATOWANIE LINII*/
 	spis_funkcji str_to_int(const std::string & funkcja);
 	void to_upper(std::string & s);
@@ -58,7 +60,7 @@ public:
 	void help();
 	
 	void credits();
-	
+	void rundummy();
 	
 
 	void exit();

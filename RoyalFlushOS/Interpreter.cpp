@@ -584,11 +584,14 @@ bool Interpreter::interpretation()
 	std::pair<int, int> prep = prepareCommand(command);
 	std::string arg_string = getArguments(prep);
 	std::vector<std::string> args = prepareArguments(arg_string, prep);
-	
+
 	selectFunction(prep, args);
 	printState();
 	if (prep.first == 98)
+	{
+		this->pcb->set_command_counter(0);
 		return false;
+	}
 	else
 		return true;
 }

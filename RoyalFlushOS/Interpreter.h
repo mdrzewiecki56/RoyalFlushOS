@@ -43,9 +43,7 @@ private:
 
 	void load(std::string reg, int value); //ladowanie wartosci do rejestru
 	void load(std::string reg, std::string address);
-
-	void equals(std::string address, int value); //czy rowne?
-	void equals(std::string address, std::string address2);
+	void jumpIfZero(std::string reg, int counter);
 
 	void selectFunction(const std::pair<int, int >&  CommandParameters, const std::vector<std::string>& Arguments); //wybieranie funkcji do wywolanie na podstawie rozkazu
 	void readFile(std::string argument);
@@ -53,8 +51,8 @@ private:
 public:
 	Interpreter(PCB* process, MemoryManager* manager, dysk* disk, ProcessManager* pm);
 
-	void interpretation(std::string &command);
-	void fullInterpretation();
+	bool interpretation();
+	//void fullInterpretation();
 	void printState();
 
 };

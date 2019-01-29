@@ -74,6 +74,7 @@ std::pair<int, int>  Interpreter::prepareCommand(std::string &command)
 		//Programowe
 		std::make_pair("JP",std::make_pair(19,1)),	//Skok
 		std::make_pair("JZ",std::make_pair(20,2)),	//Skok jesli zero
+
 		std::make_pair("SP", std::make_pair(98, 0)), //Koniec pracy
 		std::make_pair("ER", std::make_pair(99, 0)) //Error - nie obslugiwane polecenie
 
@@ -418,19 +419,6 @@ void Interpreter::readFile(std::string argument)
 	this->pcb->reg4 = std::stol(num_str);
 
 }
-//OPERACJE LOGICZNE
-
-//Rowne - nie skonczone
-
-//Rozne
-
-//Wieksze
-
-//Mniejsze
-
-//Wieksze rowne
-
-//Mniejsze rowne
 
 //PAMIEC - do zrobienia
 void readMemory(const std::string register, const std::string mem_str)
@@ -446,16 +434,30 @@ void writeMemory(const std::string register, const std::string mem_str)
 	//mm->writeString(ActiveProcess, stoi(Arguments[1]), memContetn);
 }
 
-//do obrobki
+//SKOKI
+void Interpreter::jumpIfZero(std::string reg, int counter)
+{
+	if (reg == "AX"	&& this->pcb->reg1 == 0)
+		pcb->set_command_counter(counter);
+	else if (reg == "BX" && this->pcb->reg2 == 0)
+		pcb->set_command_counter(counter);
+	else if (reg == "CX" && this->pcb->reg3 == 0)
+		pcb->set_command_counter(counter);
+	else if (reg == "DX" && this->pcb->reg4 == 0)
+		pcb->set_command_counter(counter);
+}
+
 void Interpreter::selectFunction(const std::pair<int, int >&  CommandParameters, const std::vector<std::string>& Arguments)
 {
-	std::cout << "Parametry: " << CommandParameters.first << "," << CommandParameters.second << std::endl;
+	/*std::cout << "Parametry: " << CommandParameters.first << "," << CommandParameters.second << std::endl;
 	for (auto i : Arguments)
 	{
 		std::cout << i << std::endl;
 	}
-	
+	*/
+
 	int value;
+
 	switch (CommandParameters.first)
 	{
 	case 0://AD = Dodawanie
@@ -555,10 +557,7 @@ void Interpreter::selectFunction(const std::pair<int, int >&  CommandParameters,
 		this->pcb->command_counter = std::stoi(Arguments[0]);
 		break;
 	case 20://JZ = Skok jesli zero gdzies
-		this->pcb->command_counter = std::stoi(Arguments[1]);
-		break;
-	case 23://SP = Koniec programu
-		//end();
+		jumpIfZero(Arguments[0], std::stoi(Arguments[1]));
 		break;
 	case 98:
 		break;
@@ -568,7 +567,6 @@ void Interpreter::selectFunction(const std::pair<int, int >&  CommandParameters,
 		break;
 	default:
 		throw "Nieznana Komenda!";
-
 		break;
 	}
 
@@ -580,66 +578,23 @@ void Interpreter::printState()
 	std::cout << "\nRegisters AX: " << pcb->reg1 << " BX: " << pcb->reg2 << " CX: " << pcb->reg3 << " DX: " << pcb->reg4 <<std::endl;
 }
 
-void Interpreter::interpretation(std::string &command)
+bool Interpreter::interpretation()
 {
+	std::string command = getCommand();
 	std::pair<int, int> prep = prepareCommand(command);
 	std::string arg_string = getArguments(prep);
 	std::vector<std::string> args = prepareArguments(arg_string, prep);
-	//std::cout << args[0] << " " << args[1];
-	//std::cout << std::endl << prep.first;
-	/*if (prep.first == 19)
-	{
-		command = this->command_cp.substr(stoi(args[0]));
-	}
-
-	if (prep.first == 20)
-	{
-		if (args[0] == "AX")
-		{
-			if (pcb->reg1 == 0)
-			{
-				command = this->command_cp.substr(stoi(args[1]));
-			}
-		}
-		else if (args[0] == "BX")
-		{
-			if (pcb->reg2 == 0)
-			{
-				command = this->command_cp.substr(stoi(args[1]));
-			}
-		}
-		else if (args[0] == "CX")
-		{
-			if (pcb->reg3 == 0)
-			{
-				command = this->command_cp.substr(stoi(args[1]));
-			}
-		}
-		else if (args[0] == "DX")
-		{
-			if (pcb->reg4 == 0)
-			{
-				command = this->command_cp.substr(stoi(args[1]));
-			}
-		}
-	}
-	selectFunction(prep, args);
-	pcb->command_counter += 2;
-	*/
-	/*if (args.size() == 1)
-		this->counter+= 3 + args[0].length();
-	if (args.size() == 2)
-		this->counter += 3 + args[0].length() + 1 + args[1].length();
-	printState();*/
-	//std::cout << command << std::endl;
+	
 	selectFunction(prep, args);
 	printState();
-	
+	if (prep.first == 98)
+		return false;
+	else
+		return true;
 }
-
+/*
 void Interpreter::fullInterpretation()
 {
-	std::string command;
 	while (command != "SP")
 	{
 		command = getCommand();
@@ -648,17 +603,5 @@ void Interpreter::fullInterpretation()
 		std::cout << "Counter: " << this->pcb->command_counter << std::endl;
 		pcb->real_time++;
 	}
-	
 
-}
-/*
-int main()
-{
-	Interpreter interpreter;
-	std::string command = "LO AX 6 LO BX AX SU BX 1 JZ BX 49 MP AX BX JP 17 SP";
-	interpreter.fullCommand = command;
-	interpreter.fullInterpretation(command);
-	system("pause");
-	return 0;
-}
-*/
+}*/

@@ -45,6 +45,9 @@
     <ClInclude Include="Shell.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="BetterShell.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dysk.cpp">
@@ -78,6 +81,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="RoyalFlushOS.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="BetterShell.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

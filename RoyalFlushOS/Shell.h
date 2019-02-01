@@ -48,7 +48,7 @@ public:
 	 void run(); //dzialanie programu
 	void command(); //obsluga komand
 	void switch_case();
-	void runprocess(std::vector<std::string>command_line);
+	void addprocess_to_scheduler_queue(std::string proces_name);
 	/*PRACA KROKOWA*/ //by SA A.Dokowicz
 	void go();
 	/*FORMATOWANIE LINII*/
@@ -62,7 +62,7 @@ public:
 	void help();
 	
 	void credits();
-	void rundummy();
+	
 	
 
 	void exit();

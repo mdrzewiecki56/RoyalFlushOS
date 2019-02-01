@@ -115,6 +115,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="BetterShell.h" />
     <ClInclude Include="dysk.h" />
     <ClInclude Include="Help.h" />
     <ClInclude Include="inode.h" />
@@ -127,6 +128,7 @@
     <ClInclude Include="Shell.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="BetterShell.cpp" />
     <ClCompile Include="dysk.cpp" />
     <ClCompile Include="Help.cpp" />
     <ClCompile Include="inode.cpp" />

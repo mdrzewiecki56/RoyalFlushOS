@@ -1,14 +1,44 @@
 #include "Scheduler.h"
 
-void Scheduler::add(PCB * nowyproces)
+void Scheduler::add_first(PCB * nowyproces)
 {
-
 	std::cout << nowyproces->name << " -> This process was added to the queue with ready processes" << "\n";
 	pr_queue.push(nowyproces);//poprostu dodaje do kolejki kolejny proces a kolejka sama policzy 
+	first = pr_queue.top();
+
 	this->print_queue();
 	if (first != this->pr_queue.top()) {
+		first->set_state(Ready);
 		first = this->pr_queue.top();
 	}
+	first->set_state(Running);
+}
+void Scheduler::add(PCB * nowyproces)
+{
+	int real_time_from_process;
+	int predicted_time_from_process;
+	//przelicza aktualnie wykonywany
+
+	real_time_from_process = this->pr_queue.top()->real_time;
+	predicted_time_from_process = this->pr_queue.top()->predicted_time;
+	this->pr_queue.top()->predicted_time = (int)((0.5*real_time_from_process) + ((1 - 0.5)*predicted_time_from_process));
+	this-> pr_queue.top()->real_time = 0;//czyscimy bo to juz nie aktualne;
+
+	if ((this->pr_queue.top()->name == "dummy")) {
+		this->pr_queue.top()->predicted_time = 999999999;
+		this->pr_queue.top()->real_time = 0;
+		this->pr_queue.top()->set_state(Ready);
+	}
+	std::cout << nowyproces->name << " -> This process was added to the queue with ready processes" << "\n";
+	pr_queue.push(nowyproces);//poprostu dodaje do kolejki kolejny proces a kolejka sama policzy 
+	
+	
+	this->print_queue();
+	if (first != this->pr_queue.top()) {
+		first->set_state(Ready);
+		first = this->pr_queue.top();
+	}
+	first->set_state(Running);
 }
 void Scheduler::run()
 {
@@ -19,8 +49,8 @@ void Scheduler::run()
 	pr_queue.pop();
 	first = this->pr_queue.top();
 
-}
-
+}//unused
+/*
 void Scheduler::remove(process_state state)
 {
 
@@ -69,6 +99,14 @@ void Scheduler::remove(process_state state)
 		//wystartuj nowy proces
 		//this->run();
 	
+}
+*/
+
+void Scheduler::remove(process_state state) {
+	pr_queue.top()->set_state(state);
+	pr_queue.pop();
+	first = pr_queue.top();
+	first->set_state(Running);
 }
 
 int Scheduler::size() {

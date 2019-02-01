@@ -19,6 +19,7 @@ public:
 	PCB* first = NULL; //wskaznik na pierwszy proces gotowy do wykonania
 	PCB* dummy = NULL; //wskaznik na dummy 
 	void add(PCB* nowyproces);
+	void add_first(PCB * nowyproces);
 	void run();//uruchomienie procesu
 	void remove(process_state state);//usuwa proces ktory zostal wykonany lub nie mozna bylo go wykonac i jego stan zmieniono na waiting jako argument interpreter podaje Terminated lub Waiting 
 	// po wykonaniu remove od razu nastepny proces zaczyna dzialac 

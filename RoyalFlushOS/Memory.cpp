@@ -206,13 +206,20 @@ int MemoryManager::Write(PCB *process, int adress, std::string data) {
 
 	for (int i = 0; i < data.size(); i++) {
 		stronica = (adress + i) / 16;
-		if (process->page_table->at(stronica).bit == 0)
-			LoadtoMemory(SwapFile[process->PID][stronica], stronica, process->PID, process->page_table);
+		//if (process->page_table->at(stronica).bit == 0)
+			//LoadtoMemory(SwapFile[process->PID][stronica], stronica, process->PID, process->page_table);
 
-		RAM[process->page_table->at(stronica).frame * 16 + adress + i - (16 * stronica)] = data[i];
-		setFrameOrder(process->page_table->at(stronica).frame);
+		//RAM[process->page_table->at(stronica).frame * 16 + adress + i - (16 * stronica)] = data[i];
+		RAM[adress + i] = data[i];
+		//setFrameOrder(process->page_table->at(stronica).frame);
 	}
 	return 1;
+}
+
+std::string MemoryManager::Read(int adress, int range) {
+	std::string str;
+	for (int i = 0; i < range; i++) str += RAM[adress + i];
+	return str;
 }
 
 int MemoryManager::SwapPages(std::vector<PageTableData>* page_table, int pageNumber, int PID)

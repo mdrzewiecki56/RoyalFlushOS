@@ -88,6 +88,8 @@ public:
 	//zapisywanie do pamieci fizycznej
 	int Write(PCB *process, int adress, std::string data);
 
+	std::string Read(int adress, int range);
+
 	std::map <int, std::vector<Page>> SwapFile;
 
 	std::vector<FramelistData> Frames;

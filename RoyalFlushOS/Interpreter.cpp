@@ -65,8 +65,8 @@ std::pair<int, int>  Interpreter::prepareCommand(std::string &command)
 		std::make_pair("KP",std::make_pair(12,1)),	//Zabicie procesu
 
 		//Pamiec
-		std::make_pair("RM",std::make_pair(13,2)),
-		std::make_pair("WM",std::make_pair(14,2)),
+		std::make_pair("MR",std::make_pair(13,3)),
+		std::make_pair("MW",std::make_pair(14,2)),
 
 		//Dysk
 		std::make_pair("RF",std::make_pair(15,1)),
@@ -98,7 +98,7 @@ std::pair<int, int>  Interpreter::prepareCommand(std::string &command)
 //na podstawie parametrow z bazy pobiera argumenty
 std::string Interpreter::getArguments(std::pair<int, int> parameters)
 {
-	std::string arg1, arg2;
+	std::string arg1, arg2, arg3;
 	for (int i = 0; i < parameters.second; i++)
 	{
 		if (i == 0)
@@ -107,16 +107,26 @@ std::string Interpreter::getArguments(std::pair<int, int> parameters)
 			arg1 += " ";
 			this->pcb->command_counter += arg1.length();
 		}
-		else
+		else if (i == 1)
 		{
 			arg2 += mm->Get(this->pcb, this->pcb->get_command_counter());
-			this->pcb->command_counter += arg2.length()+1;
+			if (parameters.second > 2)
+			{
+				arg2 += " ";
+				this->pcb->command_counter += arg2.length();
+			}
+			else
+				this->pcb->command_counter += arg2.length() + 1;
+		}
+		else if (i == 2)
+		{
+			arg3 += mm->Get(this->pcb, this->pcb->get_command_counter());
+			this->pcb->command_counter += arg3.length() + 1;
 		}
 
 	}
-	std::cout << "Argumenty:" << arg1 <<", " <<arg2 << std::endl;
-	
-	return (arg1 + arg2);
+	std::cout << "Argumenty:" << arg1 << "," <<arg2 << ","<<arg3 << "," << std::endl;
+	return (arg1 + arg2 + arg3);
 }
 
 
@@ -179,7 +189,7 @@ void Interpreter::add(std::string reg, std::string address)
 	else
 	{
 		std::string sOutput = std::regex_replace(address, std::regex(R"([\D])"), "");
-		int value = std::stoi(sOutput);
+		int value = std::stoi(mm->Get(this->pcb, std::stoi(sOutput)));
 	}
 
 	if (reg == "AX")
@@ -224,7 +234,7 @@ void Interpreter::substract(std::string reg, std::string address)
 	else
 	{
 		std::string sOutput = std::regex_replace(address, std::regex(R"([\D])"), "");
-		int value = std::stoi(sOutput);
+		int value = std::stoi(mm->Get(this->pcb, std::stoi(sOutput)));
 	}
 
 	if (reg == "AX")
@@ -268,7 +278,7 @@ void Interpreter::multiply(std::string reg, std::string address)
 	else
 	{
 		std::string sOutput = std::regex_replace(address, std::regex(R"([\D])"), "");
-		int value = std::stoi(sOutput);
+		int value = std::stoi(mm->Get(this->pcb, std::stoi(sOutput)));
 	}
 
 	if (reg == "AX")
@@ -311,7 +321,7 @@ void Interpreter::divide(std::string reg, std::string address)
 	else
 	{
 		std::string sOutput = std::regex_replace(address, std::regex(R"([\D])"), "");
-		int value = std::stoi(sOutput);
+		int value = std::stoi(mm->Get(this->pcb, std::stoi(sOutput)));
 	}
 
 	if (reg == "AX")
@@ -338,13 +348,6 @@ void Interpreter::decrement(std::string address)
 		pcb->reg3--;
 	else if (address == "DX")
 		pcb->reg4--;
-	else
-	{
-		std::string sOutput = std::regex_replace(address, std::regex(R"([\D])"), "");
-		int value = std::stoi(sOutput);
-		//pomniejszanie miejsca w pamieci
-	}
-	//to trzeba poprawic jak dostane funkcje pobierania z pamieci
 
 }
 //Inkrementacja
@@ -360,13 +363,6 @@ void Interpreter::increment(std::string address)
 		pcb->reg3++;
 	else if (address == "DX")
 		pcb->reg4++;
-	else
-	{
-		std::string sOutput = std::regex_replace(address, std::regex(R"([\D])"), "");
-		int value = std::stoi(sOutput);
-		//powiekszanie miejsca w pamieci
-	}
-	//to trzeba poprawic jak dostane funkcje pobierania z pamieci
 }
 //Przypisywanie wartosci
 void Interpreter::load(std::string reg, int value)
@@ -394,12 +390,6 @@ void Interpreter::load(std::string reg, std::string address)
 		value = pcb->reg3;
 	else if (address == "DX")
 		value = pcb->reg4;
-	else
-	{
-		std::string sOutput = std::regex_replace(address, std::regex(R"([\D])"), "");
-		int value = std::stoi(sOutput);
-	}
-	//to trzeba poprawic jak dostane funkcje pobierania z pamieci
 
 	if (reg == "AX")
 		pcb->reg1 = value;
@@ -421,17 +411,46 @@ void Interpreter::readFile(std::string argument)
 }
 
 //PAMIEC - do zrobienia
-void readMemory(const std::string register, const std::string mem_str)
+void Interpreter::readMemory(const std::string reg, std::string mem_str, int range)
 {
-	//int registerIndex = std::stoi(register);
-	//std::string memContetn = mm->readString(ActiveProcess, stoi(mem_str));
-	//ActiveProcess->registers[registerIndex] = stoi(memContetn);
+	mem_str = std::regex_replace(mem_str, std::regex(R"([\D])"), "");
+	std::string memContent = mm->Read(std::stoi(mem_str),range);
+	std::cout << mm->Read(std::stoi(mem_str), range) << "!";
+	if (reg == "AX")
+		pcb->reg1 = std::stoi(memContent);
+	else if (reg == "BX")
+		pcb->reg2 = std::stoi(memContent);
+	else if (reg == "CX")
+		pcb->reg3 = std::stoi(memContent);
+	else if (reg == "DX")
+		pcb->reg4 = std::stoi(memContent);
 }
-void writeMemory(const std::string register, const std::string mem_str)
+void Interpreter::writeMemory(const int value, std::string mem_str)
 {
-	//int registerIndex = stoi(Arguments[0]);
-	//string memContetn = to_string(ActiveProcess->registers[registerIndex]);
-	//mm->writeString(ActiveProcess, stoi(Arguments[1]), memContetn);
+	mem_str = std::regex_replace(mem_str, std::regex(R"([\D])"), "");
+	std::cout << "\nmiejsce do zapisu:" << mem_str;
+	std::cout << "\wartosc do zapisu:" << value;
+	mm->Write(this->pcb, std::stoi(mem_str), std::to_string(value));
+}
+
+void Interpreter::writeMemory(const std::string reg, std::string mem_str)
+{
+	int value = 0;
+	if (reg == "AX")
+		value = pcb->reg1;
+	else if (reg == "BX")
+		value = pcb->reg2;
+	else if (reg == "CX")
+		value = pcb->reg3;
+	else if (reg == "DX")
+		value = pcb->reg4;
+
+	mem_str = std::regex_replace(mem_str, std::regex(R"([\D])"), "");
+	std::cout << "\nmiejsce do zapisu:" <<  mem_str;
+	std::cout << "\wartosc do zapisu:" << value;
+	mm->Write(this->pcb, std::stoi(mem_str), std::to_string(value));
+
+
 }
 
 //SKOKI
@@ -457,7 +476,6 @@ void Interpreter::selectFunction(const std::pair<int, int >&  CommandParameters,
 	*/
 
 	int value;
-
 	switch (CommandParameters.first)
 	{
 	case 0://AD = Dodawanie
@@ -516,7 +534,6 @@ void Interpreter::selectFunction(const std::pair<int, int >&  CommandParameters,
 		else
 			load(Arguments[0], Arguments[1]);
 		break;
-		break;
 
 		//OPERACJE NA PLIKACH
 	case 7://CF = Utworz plik
@@ -545,11 +562,18 @@ void Interpreter::selectFunction(const std::pair<int, int >&  CommandParameters,
 		break;
 
 		//PAMIEC
-	case 13:
-		readMemory(Arguments[0], Arguments[1]);
+	case 13://MR - czytaj z pamieci
+		std::cout << "arg1:" << Arguments[0] << ";\n" << "arg2:" << Arguments[1] << ";\n" << "arg3:" << Arguments[2] << ";";
+		readMemory(Arguments[0], Arguments[1], std::stoi(Arguments[2]));
 		break;
-	case 14:
-		writeMemory(Arguments[0], Arguments[1]);
+	case 14://MW - zapisz do pamieci
+		if (Arguments[0][0] != '[' && Arguments[0][1] != 'X')
+		{
+			int arg2 = std::stoi(Arguments[0]);
+			writeMemory(arg2, Arguments[1]);
+		}
+		else
+			writeMemory(Arguments[0], Arguments[1]);
 		break;
 
 		//ROZWIAZANE NA INNYM POZIOMIE

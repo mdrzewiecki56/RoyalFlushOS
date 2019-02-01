@@ -41,6 +41,10 @@ private:
 
 	void increment(std::string reg); //inkrementowanko
 
+	void writeMemory(const int value, const std::string mem_str); //zapis do pamieci
+	void writeMemory(const std::string reg, const std::string mem_str);
+	void readMemory(const std::string reg, std::string mem_str, int range); //odczyt z pamieci
+
 	void load(std::string reg, int value); //ladowanie wartosci do rejestru
 	void load(std::string reg, std::string address);
 	void jumpIfZero(std::string reg, int counter);

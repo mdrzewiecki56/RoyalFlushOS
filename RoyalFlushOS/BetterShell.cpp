@@ -287,6 +287,7 @@ void BetterShell::dmemory()
 	else if (parsed_command.size() == 1)
 	{
 		this->mem->showPMemory();
+		this->mem->printFIFO();
 	}
 
 	else
@@ -325,8 +326,12 @@ void BetterShell::cp()
 void BetterShell::rp()
 {
 	if (parsed_command.size() == 2) {
+		//PCB* wsk = scheduler.first; //TEST
+
 		scheduler.add(this->mng->get_process(parsed_command[1]).get());
+		//if(wsk!=scheduler.first){//TEST
 		this->mem->LoadProgram(scheduler.first->file_name, scheduler.first->PID, scheduler.first);
+	//	}//TEST
 	}
 
 	else { std::cout << "Wrong command"; }
@@ -422,6 +427,7 @@ void BetterShell::go()
 	Interpreter interpreter(this->mng->get_process(scheduler.first->name).get(), this->mem.get(), this->disk.get(), this->mng.get());
 	if (interpreter.interpretation() == false) {
 		scheduler.remove(Terminated);
+		//this->mem->LoadProgram(scheduler.first->file_name, scheduler.first->PID, scheduler.first);//test
 	}
 }
 

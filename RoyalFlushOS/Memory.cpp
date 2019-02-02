@@ -211,15 +211,16 @@ int MemoryManager::Write(PCB *process, int adress, std::string data) {
 
 		//RAM[process->page_table->at(stronica).frame * 16 + adress + i - (16 * stronica)] = data[i];
 		RAM[adress + i] = data[i];
-		//setFrameOrder(process->page_table->at(stronica).frame);
+		
 	}
+	//setFrameOrder(process->page_table->at(stronica).frame);
 	return 1;
 }
 
 std::string MemoryManager::Read(int adress, int range) {
 	std::string str;
 	for (int i = 0; i < range; i++) str += RAM[adress + i];
-	return str;
+		return str;
 }
 
 int MemoryManager::SwapPages(std::vector<PageTableData>* page_table, int pageNumber, int PID)

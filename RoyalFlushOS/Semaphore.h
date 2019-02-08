@@ -11,7 +11,7 @@ public:
 	Semaphore();
 	Semaphore(int initial_value);
 	~Semaphore();
-	void wait();
+	void wait(PCB &new_process);
 	void signal();
-	//void show_queue_state();
+	void show_queue_state();
 };

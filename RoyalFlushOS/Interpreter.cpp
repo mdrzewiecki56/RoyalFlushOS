@@ -21,7 +21,7 @@ std::string Interpreter::getCommand()
 	std::string command;
 	command = mm->Get(this->pcb, this->pcb->get_command_counter());
 	this->pcb->command_counter+=command.length() + 1;
-	std::cout << "Komenda:" << command<< std::endl;
+	//std::cout << "Komenda:" << command<< std::endl;
 	return command;
 }
 char Interpreter::readByte(std::string &command)
@@ -415,7 +415,7 @@ void Interpreter::readMemory(const std::string reg, std::string mem_str, int ran
 {
 	mem_str = std::regex_replace(mem_str, std::regex(R"([\D])"), "");
 	std::string memContent = mm->Read(std::stoi(mem_str),range);
-	std::cout << mm->Read(std::stoi(mem_str), range) << "!";
+	//std::cout << mm->Read(std::stoi(mem_str), range) << "!";
 	if (reg == "AX")
 		pcb->reg1 = std::stoi(memContent);
 	else if (reg == "BX")
@@ -428,8 +428,8 @@ void Interpreter::readMemory(const std::string reg, std::string mem_str, int ran
 void Interpreter::writeMemory(const int value, std::string mem_str)
 {
 	mem_str = std::regex_replace(mem_str, std::regex(R"([\D])"), "");
-	std::cout << "\nmiejsce do zapisu:" << mem_str;
-	std::cout << "\wartosc do zapisu:" << value;
+	//std::cout << "\nmiejsce do zapisu:" << mem_str;
+	//std::cout << "\wartosc do zapisu:" << value;
 	mm->Write(this->pcb, std::stoi(mem_str), std::to_string(value));
 }
 
@@ -446,8 +446,8 @@ void Interpreter::writeMemory(const std::string reg, std::string mem_str)
 		value = pcb->reg4;
 
 	mem_str = std::regex_replace(mem_str, std::regex(R"([\D])"), "");
-	std::cout << "\nmiejsce do zapisu:" <<  mem_str;
-	std::cout << "\wartosc do zapisu:" << value;
+	//std::cout << "\nmiejsce do zapisu:" <<  mem_str;
+	//std::cout << "\wartosc do zapisu:" << value;
 	mm->Write(this->pcb, std::stoi(mem_str), std::to_string(value));
 
 
@@ -563,7 +563,7 @@ void Interpreter::selectFunction(const std::pair<int, int >&  CommandParameters,
 
 		//PAMIEC
 	case 13://MR - czytaj z pamieci
-		std::cout << "arg1:" << Arguments[0] << ";\n" << "arg2:" << Arguments[1] << ";\n" << "arg3:" << Arguments[2] << ";";
+		//std::cout << "arg1:" << Arguments[0] << ";\n" << "arg2:" << Arguments[1] << ";\n" << "arg3:" << Arguments[2] << ";";
 		readMemory(Arguments[0], Arguments[1], std::stoi(Arguments[2]));
 		break;
 	case 14://MW - zapisz do pamieci
@@ -611,7 +611,7 @@ bool Interpreter::interpretation()
 
 	selectFunction(prep, args);
 	pcb->real_time++;
-	printState();
+	//printState();
 	if (prep.first == 98)
 	{
 		this->pcb->set_command_counter(0);

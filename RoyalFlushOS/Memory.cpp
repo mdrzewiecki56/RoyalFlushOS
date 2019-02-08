@@ -72,7 +72,7 @@ int MemoryManager::LoadtoMemory(Page page, int pageN, int PID, std::vector<PageT
 	Frames[Frame].page_table = page_table;
 	Frames[Frame].PID = PID;
 
-	showPageTable(page_table);
+	//showPageTable(page_table);
 
 	return Frame;
 }

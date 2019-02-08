@@ -15,7 +15,7 @@ dysk::~dysk()
 
 bool dysk::Create_File(std::string file_name, std::string data)
 {	
-	file_synchronization.wait();
+	//file_synchronization.wait();
 	const int size_of_file_name = file_name.size();
 	const char* raw_data = data.c_str();
 	
@@ -23,7 +23,7 @@ bool dysk::Create_File(std::string file_name, std::string data)
 	for (const auto& e : directory) {
 		if (e.first == file_name) {
 			std::cout << "File with the same name already exists.\n";
-			file_synchronization.signal();
+		//file_synchronization.signal();
 			return false;
 		}
 	}
@@ -104,7 +104,7 @@ bool dysk::Create_File(std::string file_name, std::string data)
 
 bool dysk::Delete_File(std::string file_name)
 {
-	file_synchronization.wait();
+//	file_synchronization.wait();
 	//sprawdzenie, czy plik o podanej nazwie juz istnieje
 	bool exists = false;
 	for (auto& e : directory) {
@@ -143,18 +143,18 @@ bool dysk::Delete_File(std::string file_name)
 
 	if (exists == false) {
 		std::cout << "Couldn't find file named " << file_name << ".\n";
-		file_synchronization.signal();
+	//	file_synchronization.signal();
 		return false;
 	}
 	
 	std::cout << "Deleting file " << file_name << " finished successfully.\n";
-	file_synchronization.signal();
+	//file_synchronization.signal();
 	return true;
 }
 
 bool dysk::Write_To_File(std::string file_name, std::string data)
 {
-	file_synchronization.wait();
+	//file_synchronization.wait();
 	bool exists = false;
 	bool end = false;
 	inode write_node;
@@ -369,7 +369,7 @@ bool dysk::Write_To_File(std::string file_name, std::string data)
 
 std::string dysk::Read_From_File(std::string file_name)
 {
-	file_synchronization.wait();
+//	file_synchronization.wait();
 	bool exists = false;
 	std::string return_string = "";
 	for (const auto& e : directory) {
@@ -430,7 +430,7 @@ std::string dysk::Read_From_File(std::string file_name)
 
 bool dysk::Change_File_Name(std::string old_file_name, std::string new_file_name)
 {
-	file_synchronization.wait();
+	//file_synchronization.wait();
 	bool exists = false;
 	for (auto& e : directory) {
 		if (e.first == old_file_name) {
@@ -456,7 +456,7 @@ bool dysk::Change_File_Name(std::string old_file_name, std::string new_file_name
 
 bool dysk::Copy_File(std::string file_one, std::string new_file)
 {
-	file_synchronization.wait();
+//	file_synchronization.wait();
 	bool exists = false;
 	for (auto& e : directory) {
 		if (e.first == file_one) { //znalezienie pliku o podanej nazwie
@@ -480,7 +480,7 @@ bool dysk::Copy_File(std::string file_one, std::string new_file)
 
 void dysk::Format_Disc()
 {
-	file_synchronization.wait();
+	//file_synchronization.wait();
 	for (int i = 0; i < 1024 ; i++) {
 		data_container[i] = NULL; //wyzerowanie dysku
 	}

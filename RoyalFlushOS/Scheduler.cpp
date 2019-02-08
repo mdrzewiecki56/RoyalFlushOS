@@ -21,8 +21,8 @@ void Scheduler::add(PCB * nowyproces)
 
 	real_time_from_process = this->pr_queue.top()->real_time;
 	predicted_time_from_process = this->pr_queue.top()->predicted_time;
-	this->pr_queue.top()->predicted_time = (int)((0.5*real_time_from_process) + ((1 - 0.5)*predicted_time_from_process));
-	this-> pr_queue.top()->real_time = 0;//czyscimy bo to juz nie aktualne;
+	this->pr_queue.top()->predicted_time = (int)((0.5*real_time_from_process) + ((1 - 0.5)*predicted_time_from_process)); std::cout << "predicted time done\n";
+	this->pr_queue.top()->real_time = 0; std::cout << "real time done\n";//czyscimy bo to juz nie aktualne;
 
 	if ((this->pr_queue.top()->name == "dummy")) {
 		this->pr_queue.top()->predicted_time = 999999999;
@@ -103,10 +103,19 @@ void Scheduler::remove(process_state state)
 */
 
 void Scheduler::remove(process_state state) {
+	int real_time_from_process;
+	int predicted_time_from_process;
+	//przelicza aktualnie wykonywany
+
+	real_time_from_process = this->pr_queue.top()->real_time;
+	predicted_time_from_process = this->pr_queue.top()->predicted_time;
+	this->pr_queue.top()->predicted_time = (int)((0.5*real_time_from_process) + ((1 - 0.5)*predicted_time_from_process)); std::cout << "predicted time done\n";
+	this->pr_queue.top()->real_time = 0; std::cout << "real time done\n";//czyscimy bo to juz nie aktualne;
 	pr_queue.top()->set_state(state);
 	pr_queue.pop();
 	first = pr_queue.top();
 	first->set_state(Running);
+
 }
 
 int Scheduler::size() {

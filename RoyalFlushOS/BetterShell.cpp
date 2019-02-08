@@ -430,7 +430,7 @@ void BetterShell::runtime()
 	else if (parsed_command.size() == 1) {
 
 		//TUTAJ
-		std::cout << "Already running program is: " << scheduler.already_running->name << "\n";
+		std::cout << "Already running program is: " << scheduler.first->name << "\n";
 	}
 	else
 	{
@@ -449,6 +449,8 @@ void BetterShell::go()
 		scheduler.remove(Terminated);
 		this->mem->LoadProgram(scheduler.first->file_name, scheduler.first->PID, scheduler.first);//test
 	}
+	//scheduler.first->real_time += 1;
+	std::cout << "scheduler.first" << scheduler.first->name << "eof \n";
 }
 
 // Cls

@@ -66,13 +66,14 @@ void BetterShell::run_command()
 
 	/// MEMORY
 	else if (komenda == "DMEMORY") { dmemory(); }
+	//else if (komenda == "SHOWPT") { show_paget(); }
 	/// PROCESS
 	else if (komenda == "CP") { cp(); }
 	else if (komenda == "RP") { rp(); }
 	else if (komenda == "DLIST") { dlist(); }
 	else if (komenda == "DPCB") { dpcb(); }
 	else if (komenda == "DPROCESS") { dprocess(); }
-
+	else if (komenda == "MONSIEUR") { recognation(); }
 	//KOLEJKA
 	else if (komenda == "PQ") { pq(); }
 	else if (komenda == "RUNTIME") { runtime(); }
@@ -296,6 +297,12 @@ void BetterShell::dmemory()
 	}
 }
 
+void BetterShell::show_paget()
+{
+}
+
+
+
 // Create process
 void BetterShell::cp()
 {
@@ -326,12 +333,12 @@ void BetterShell::cp()
 void BetterShell::rp()
 {
 	if (parsed_command.size() == 2) {
-		//PCB* wsk = scheduler.first; //TEST
+		PCB* wsk = scheduler.first; //TEST
 
 		scheduler.add(this->mng->get_process(parsed_command[1]).get());
-		//if(wsk!=scheduler.first){//TEST
+		if(wsk!=scheduler.first){//TEST
 		this->mem->LoadProgram(scheduler.first->file_name, scheduler.first->PID, scheduler.first);
-	//	}//TEST
+		}//TEST
 	}
 
 	else { std::cout << "Wrong command"; }
@@ -383,6 +390,19 @@ void BetterShell::dprocess()
 	}
 }
 
+void BetterShell::recognation()
+{
+	if (parsed_command[1] == "BOND") {
+		std::cout << "Access approved -Welcome 007" << "\n";
+	}
+	else { std::cout << "Error autodestruction process starts.\n"; 
+	
+	
+	Sleep(100);
+	exit();
+	};
+}
+
 // Pqueue
 void BetterShell::pq()
 {
@@ -427,7 +447,7 @@ void BetterShell::go()
 	Interpreter interpreter(this->mng->get_process(scheduler.first->name).get(), this->mem.get(), this->disk.get(), this->mng.get());
 	if (interpreter.interpretation() == false) {
 		scheduler.remove(Terminated);
-		//this->mem->LoadProgram(scheduler.first->file_name, scheduler.first->PID, scheduler.first);//test
+		this->mem->LoadProgram(scheduler.first->file_name, scheduler.first->PID, scheduler.first);//test
 	}
 }
 

@@ -610,6 +610,7 @@ bool Interpreter::interpretation()
 	std::vector<std::string> args = prepareArguments(arg_string, prep);
 
 	selectFunction(prep, args);
+	pcb->real_time++;
 	printState();
 	if (prep.first == 98)
 	{
@@ -628,7 +629,7 @@ void Interpreter::fullInterpretation()
 		if (command != "SP")
 			interpretation(command);
 		std::cout << "Counter: " << this->pcb->command_counter << std::endl;
-		pcb->real_time++;
+		
 	}
 
 }*/

@@ -72,6 +72,8 @@ int MemoryManager::LoadtoMemory(Page page, int pageN, int PID, std::vector<PageT
 	Frames[Frame].page_table = page_table;
 	Frames[Frame].PID = PID;
 
+	showPageTable(page_table);
+
 	return Frame;
 }
 
@@ -117,11 +119,14 @@ int MemoryManager::LoadProgram(std::string path, int PID, PCB *pcb) {
 
 	//dodanie stron do pliku wymiany
 	insertToSwapFile(pagevec, PID);
-	pcb->page_table = createPageTable(PID);
-	
+	if (pcb->page_table == nullptr)
+	{
+		pcb->page_table = createPageTable(PID);
+	}
 }
 
 std::vector<PageTableData> *MemoryManager::createPageTable(int PID) {
+	
 	int pages = 8;
 	int Frame = -1;
 	std::vector<PageTableData> *page_table = new std::vector<PageTableData>;
@@ -256,7 +261,7 @@ int MemoryManager::searchForFreeFrame()
 //JEST GIT
 void MemoryManager::setFrameOrder(int frame)
 {
-	bool in_memory = false;
+	/*bool in_memory = false;
 	for (std::list<int>::iterator it = FrameOrder.begin(); it != FrameOrder.end(); it++)
 	{
 		if (*it == frame)
@@ -273,14 +278,30 @@ void MemoryManager::setFrameOrder(int frame)
 			FrameOrder.push_back(frame);
 		}
 	}
-	else if (FrameOrder.size() >= 8)
+
+	else if (FrameOrder.size() > 7)
 	{
 		if (in_memory == false)
 		{
 			FrameOrder.erase(FrameOrder.begin());
 			FrameOrder.push_back(frame);
 		}
+	}*/
+
+	if (frame > 7)
+	{
+		return;
 	}
+	for (std::list<int>::iterator it = FrameOrder.begin(); it != FrameOrder.end(); it ++)
+	{
+		if (*it == frame)
+		{
+			FrameOrder.erase(it);
+			break;
+		}
+	}
+
+	FrameOrder.push_back(frame);
 }
 
 //JEST GIT

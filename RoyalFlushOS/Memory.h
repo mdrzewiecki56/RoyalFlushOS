@@ -56,7 +56,7 @@ public:
 	//argumenty: wskaznik na obiekt klasy VirtualMemory, strona ladowana do pamieci, numer strony, PID procesu, tablica stron
 	int LoadtoMemory(Page page, int pageN, int PID, std::vector<PageTableData> *page_table);
 
-	std::list<int> FrameOrder;
+	std::list<int> FrameOrder = { 0, 1,2,3,4,5,6,7 };
 
 	char RAM[128]; // pamiec fizyczna
 

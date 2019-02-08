@@ -31,16 +31,17 @@ private:
 	void fd();
 	void dd();
 	void sd();
-
+	
 	/// MEMORY
 	void dmemory();
+	void show_paget();
 	/// PROCESS
 	void cp();
 	void rp();
 	void dlist();
 	void dpcb();
 	void dprocess();
-
+	void recognation();
 	//KOLEJKA
 	void pq();
 	void runtime();

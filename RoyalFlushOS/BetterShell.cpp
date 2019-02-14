@@ -1,8 +1,10 @@
 #include "BetterShell.h"
 #include <iostream>
 #include <cstdio>
-
-// Do you have LIGMA?
+#include <iostream>       // std::cout
+#include <string>         // std::string
+#include <stdio.h>
+#include <ctype.h>
 
 BetterShell::BetterShell()
 {
@@ -32,7 +34,7 @@ void BetterShell::loop()
 
 void BetterShell::read_command()
 {
-	std::cout << "POKER>";
+	std::cout << ">";
 	parsed_command.resize(0);
 	getline(std::cin, raw_command);
 	std::string temporary = "";
@@ -54,6 +56,9 @@ void BetterShell::read_command()
 void BetterShell::run_command()
 {
 	std::string komenda = parsed_command[0];
+	for (std::string::size_type i = 0; i < komenda.length(); ++i) {
+		komenda[i]=toupper(komenda[i]);
+	};
 
 	if (komenda == "CF") { cf(); }
 	else if (komenda == "RF") { rf(); }
@@ -488,8 +493,6 @@ void BetterShell::help()
 void BetterShell::credits()
 {
 	std::cout << "The creators:\n" << std::endl;
-	std::cout << "Interface - Kornelia Maik\n" << std::endl;
-	std::cout << "Files and catalogs - Radoslaw Leszkiewicz\n" << std::endl;
 	std::cout << "Scheluder - Arkadiusz Dokowicz\n" << std::endl;
 	std::cout << "Process Manager - Lukasz Swidziniewski\n" << std::endl;
 	std::cout << "Interpreter - Maciej Drzewiecki\n" << std::endl;
@@ -502,9 +505,9 @@ void BetterShell::credits()
 void BetterShell::exit()
 {
 	char odp;
-	std::cout << "Czy na pewno chcesz wyjsc z systemu? t/n ";
+	std::cout << "Do you really wanna fold ? y/n ";
 	std::cin >> odp;
-	if (odp == 't' || odp == 'T') { running = false; }
+	if (odp == 'y' || odp == 'Y') { running = false; }
 }
 
 // Other

@@ -142,12 +142,13 @@
     <ClCompile Include="Shell.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <Text Include="add_from_file.txt" />
-    <Text Include="arytmetyka.txt" />
-    <Text Include="cpkp.txt" />
+    <Text Include="1nwd.txt" />
+    <Text Include="2pliki.txt" />
+    <Text Include="2pamiec.txt" />
+    <Text Include="3cpkp.txt" />
     <Text Include="dummy.txt" />
-    <Text Include="Factorial.txt" />
-    <Text Include="program.txt" />
+    <Text Include="1silnia.txt" />
+    <Text Include="0testowy.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

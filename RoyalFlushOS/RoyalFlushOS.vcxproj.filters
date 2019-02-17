@@ -107,5 +107,6 @@
     <Text Include="2pamiec.txt">
       <Filter>Resource Files</Filter>
     </Text>
+    <Text Include="4procent.txt" />
   </ItemGroup>
 </Project>

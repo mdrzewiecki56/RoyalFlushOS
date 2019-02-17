@@ -142,11 +142,19 @@
     <ClCompile Include="Shell.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <Text Include="1.txt" />
     <Text Include="1nwd.txt" />
+    <Text Include="2.txt" />
     <Text Include="2pliki.txt" />
     <Text Include="2pamiec.txt" />
+    <Text Include="3.txt" />
     <Text Include="3cpkp.txt" />
+    <Text Include="4.txt" />
     <Text Include="4procent.txt" />
+    <Text Include="5.txt" />
+    <Text Include="6.txt" />
+    <Text Include="7.txt" />
+    <Text Include="8.txt" />
     <Text Include="dummy.txt" />
     <Text Include="1silnia.txt" />
     <Text Include="0testowy.txt" />

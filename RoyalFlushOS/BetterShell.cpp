@@ -76,6 +76,7 @@ void BetterShell::run_command()
 	else if (komenda == "DSF") { show_swapfile(); }
 	/// PROCESS
 	else if (komenda == "CP") { cp(); }
+	else if (komenda == "WP") { wait(); }
 	else if (komenda == "RP") { rp(); }
 	else if (komenda == "DLIST") { dlist(); }
 	else if (komenda == "DPCB") { dpcb(); }
@@ -341,7 +342,16 @@ void BetterShell::show_swapfile()
 		help_class.HELP_F();
 	}
 }
-
+//wait process
+void BetterShell::wait() {
+	if (scheduler.first->name == "dummy") {
+		std::cout << "Is not allowed to do this \n";
+	}
+	else {
+		scheduler.remove(Waiting);
+		this->mem->LoadProgram(scheduler.first->file_name, scheduler.first->PID, scheduler.first);//test
+	}
+	}
 // Create process
 void BetterShell::cp()
 {
@@ -489,7 +499,7 @@ void BetterShell::go()
 		this->mem->LoadProgram(scheduler.first->file_name, scheduler.first->PID, scheduler.first);//test
 	}
 	//scheduler.first->real_time += 1;
-	std::cout << "scheduler.first" << scheduler.first->name << "eof \n";
+	//std::cout << "scheduler.first" << scheduler.first->name << "eof \n";
 }
 
 // Cls

@@ -91,7 +91,6 @@
     <Text Include="dummy.txt">
       <Filter>Resource Files</Filter>
     </Text>
-    <Text Include="1nwd.txt" />
     <Text Include="1silnia.txt">
       <Filter>Resource Files</Filter>
     </Text>
@@ -107,6 +106,35 @@
     <Text Include="2pamiec.txt">
       <Filter>Resource Files</Filter>
     </Text>
-    <Text Include="4procent.txt" />
+    <Text Include="1nwd.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+    <Text Include="4procent.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+    <Text Include="1.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+    <Text Include="2.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+    <Text Include="3.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+    <Text Include="4.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+    <Text Include="5.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+    <Text Include="6.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+    <Text Include="7.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+    <Text Include="8.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
   </ItemGroup>
 </Project>

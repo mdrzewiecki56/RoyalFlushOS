@@ -665,7 +665,7 @@ bool Interpreter::interpretation()
 
 	selectFunction(prep, args);
 	pcb->real_time++;
-	//printState();
+	printState();
 	if (prep.first == 98)
 	{
 		this->pcb->set_command_counter(0);

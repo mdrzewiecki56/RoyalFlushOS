@@ -35,6 +35,9 @@ private:
 	/// MEMORY
 	void dmemory();
 	void show_paget();
+	void show_fifo();
+	void show_swapfile();
+
 	/// PROCESS
 	void cp();
 	void rp();

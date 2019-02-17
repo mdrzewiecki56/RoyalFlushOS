@@ -127,7 +127,7 @@ std::string Interpreter::getArguments(std::pair<int, int> parameters)
 		}
 
 	}
-	std::cout << "Argumenty:" << arg1 << "," <<arg2 << ","<<arg3 << "," << std::endl;
+	//std::cout << "Argumenty:" << arg1 << "," <<arg2 << ","<<arg3 << "," << std::endl;
 	return (arg1 + arg2 + arg3);
 }
 

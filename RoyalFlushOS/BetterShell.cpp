@@ -72,6 +72,8 @@ void BetterShell::run_command()
 	/// MEMORY
 	else if (komenda == "DMEMORY") { dmemory(); }
 	//else if (komenda == "SHOWPT") { show_paget(); }
+	else if (komenda == "FIFO") { show_fifo(); }
+	else if (komenda == "DSF") { show_swapfile(); }
 	/// PROCESS
 	else if (komenda == "CP") { cp(); }
 	else if (komenda == "RP") { rp(); }
@@ -293,7 +295,7 @@ void BetterShell::dmemory()
 	else if (parsed_command.size() == 1)
 	{
 		this->mem->showPMemory();
-		this->mem->printFIFO();
+	//	this->mem->printFIFO();
 	}
 
 	else
@@ -306,7 +308,39 @@ void BetterShell::show_paget()
 {
 }
 
+void BetterShell::show_fifo()
+{
+	if (parsed_command.size() == 2 && parsed_command[1] == "/?")
+	{
+		//help_class.SHOWMEMORY_H();
+	}
+	else if (parsed_command.size() == 1)
+	{
+		this->mem->printFIFO();
+	}
 
+	else
+	{
+		help_class.HELP_F();
+	}
+}
+
+void BetterShell::show_swapfile()
+{
+	if (parsed_command.size() == 2 && parsed_command[1] == "/?")
+	{
+		//help_class.SHOWMEMORY_H();
+	}
+	else if (parsed_command.size() == 1)
+	{
+		this->mem->printSwapFile();
+	}
+
+	else
+	{
+		help_class.HELP_F();
+	}
+}
 
 // Create process
 void BetterShell::cp()
@@ -447,8 +481,8 @@ void BetterShell::runtime()
 // TODO: MAKE THIS COMMAND
 void BetterShell::go()
 {
-	this->mem->showPMemory();
-	this->mem->printSwapFile();
+	//this->mem->showPMemory();
+	//this->mem->printSwapFile();
 	Interpreter interpreter(this->mng->get_process(scheduler.first->name).get(), this->mem.get(), this->disk.get(), this->mng.get());
 	if (interpreter.interpretation() == false) {
 		scheduler.remove(Terminated);
@@ -485,6 +519,8 @@ void BetterShell::help()
 	std::cout << "PQ - display the process queue.\n";
 	std::cout << "RUNTIME - display the running process.\n";
 	std::cout << "DMEMORY - display the content of RAM memory.\n";
+	std::cout << "FIFO - display FIFO order.\n";
+	std::cout << "DSF - show Swap File.\n";
 	std::cout << "CREDITS - display the credits.\n\n";
 	std::cout << "EXIT - exit the system.\n";
 }

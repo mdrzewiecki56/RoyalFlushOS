@@ -211,14 +211,21 @@ int MemoryManager::Write(PCB *process, int adress, std::string data) {
 
 	for (int i = 0; i < data.size(); i++) {
 		stronica = (adress + i) / 16;
-		//if (process->page_table->at(stronica).bit == 0)
-			//LoadtoMemory(SwapFile[process->PID][stronica], stronica, process->PID, process->page_table);
+		if (process->page_table->at(stronica).bit == 0)
+		{
+			LoadtoMemory(SwapFile[process->PID][stronica], stronica, process->PID, process->page_table);
+			//process->page_table->at(stronica).bit = 1;
+			//process->page_table->at(stronica).frame = stronica;
+		}
 
-		//RAM[process->page_table->at(stronica).frame * 16 + adress + i - (16 * stronica)] = data[i];
-		RAM[adress + i] = data[i];
-		
+		RAM[process->page_table->at(stronica).frame * 16 + adress + i - (16 * stronica)] = data[i];
+		//RAM[adress + i] = data[i];
 	}
-	//setFrameOrder(process->page_table->at(stronica).frame);
+
+	Frames[stronica].free = 0;
+
+	setFrameOrder(process->page_table->at(stronica).frame);
+
 	return 1;
 }
 
@@ -307,19 +314,19 @@ void MemoryManager::setFrameOrder(int frame)
 //JEST GIT
 void MemoryManager::printFIFO()
 {
-	std::cout << "Frame Order (FIFO): ";
+	std::cout << std::endl << "Frame Order (FIFO): ";
 	for (std::list<int>::iterator it = FrameOrder.begin(); it != FrameOrder.end(); it++)
 	{
 		std::cout << *it << " ";
 	}
-	std::cout << std::endl;
+	std::cout << std::endl << std::endl;
 }
 
 //JEST GIT
 void MemoryManager::printSwapFile()
 {
 	int i = 0;
-	std::cout << "Swap File: " << std::endl;
+	std::cout << std::endl << "Swap File: " << std::endl;
 
 	for (auto x : SwapFile)
 	{
@@ -328,6 +335,8 @@ void MemoryManager::printSwapFile()
 			x.second.at(i).print();
 		}
 	}
+
+	std::cout << std::endl;
 }
 
 //JEST GIT

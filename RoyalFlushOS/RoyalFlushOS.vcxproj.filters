@@ -88,23 +88,25 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="add_from_file.txt">
-      <Filter>Resource Files</Filter>
-    </Text>
-    <Text Include="arytmetyka.txt">
-      <Filter>Resource Files</Filter>
-    </Text>
-    <Text Include="cpkp.txt">
-      <Filter>Resource Files</Filter>
-    </Text>
     <Text Include="dummy.txt">
       <Filter>Resource Files</Filter>
     </Text>
-    <Text Include="Factorial.txt">
+    <Text Include="1nwd.txt" />
+    <Text Include="1silnia.txt">
       <Filter>Resource Files</Filter>
     </Text>
-    <Text Include="program.txt">
+    <Text Include="2pliki.txt">
       <Filter>Resource Files</Filter>
     </Text>
+    <Text Include="3cpkp.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+    <Text Include="0testowy.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+    <Text Include="2pamiec.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+    <Text Include="4procent.txt" />
   </ItemGroup>
 </Project>

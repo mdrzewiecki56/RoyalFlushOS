@@ -37,6 +37,9 @@ private:
 	void divide(std::string reg, int value); //dzielonko
 	void divide(std::string reg, std::string address);
 
+	void modulo(std::string reg, int value); //reszta z dzielenia
+	void modulo(std::string reg, std::string address);
+
 	void decrement(std::string reg); //dekrementowanko
 
 	void increment(std::string reg); //inkrementowanko

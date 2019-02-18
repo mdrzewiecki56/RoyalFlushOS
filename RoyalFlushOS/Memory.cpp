@@ -54,7 +54,10 @@ int MemoryManager::LoadtoMemory(Page page, int pageN, int PID, std::vector<PageT
 	int Frame = -1;
 	Frame = searchForFreeFrame();
 	if (Frame == -1) //nie ma wolnych ramek
-		Frame = SwapPages(page_table, pageN, PID);
+		if (Frames[*FrameOrder.begin()].PID == 12345) { //taka sytuacja tylko przy wartosci wpisana do RAMu przez Write()
+			Frame = *FrameOrder.begin();
+		}
+		else Frame = SwapPages(page_table, pageN, PID);
 	int end = Frame * 16 + 16;
 	for (int i = Frame * 16; i < end; i++) {
 		RAM[i] = page.data[n];
@@ -126,7 +129,7 @@ int MemoryManager::LoadProgram(std::string path, int PID, PCB *pcb) {
 }
 
 std::vector<PageTableData> *MemoryManager::createPageTable(int PID) {
-	
+
 	int pages = 8;
 	int Frame = -1;
 	std::vector<PageTableData> *page_table = new std::vector<PageTableData>;
@@ -169,7 +172,6 @@ std::string MemoryManager::Get(PCB *process, int LR) {
 		//stronica w pamieci operacyjnej
 		if (process->page_table->at(stronica).bit == 1) {
 			Frame = process->page_table->at(stronica).frame;		//ramka w ktorej pracuje
-			setFrameOrder(Frame);									//uzywam ramki wiec zmieniam jej pozycje na liscie porzadku ramek
 			if (RAM[Frame * 16 + LR - (16 * stronica)] == ' ')	//czytam do napotkania spacji
 				koniec = true;
 			else
@@ -213,26 +215,23 @@ int MemoryManager::Write(PCB *process, int adress, std::string data) {
 		stronica = (adress + i) / 16;
 		if (process->page_table->at(stronica).bit == 0)
 		{
-			LoadtoMemory(SwapFile[process->PID][stronica], stronica, process->PID, process->page_table);
-			//process->page_table->at(stronica).bit = 1;
-			//process->page_table->at(stronica).frame = stronica;
+			//LoadtoMemory(SwapFile[process->PID][stronica], stronica, process->PID, process->page_table);
+			RAM[adress + i] = data[i];
 		}
-
-		RAM[process->page_table->at(stronica).frame * 16 + adress + i - (16 * stronica)] = data[i];
-		//RAM[adress + i] = data[i];
+		//process->page_table->at(stronica).bit = 1;
+		//process->page_table->at(stronica).frame = stronica;
+		//RAM[process->page_table->at(stronica).frame * 16 + adress + i - (16 * stronica)] = data[i];
+		setFrameOrder(stronica);
+		Frames[stronica].free = 0;
+		Frames[stronica].PID = 12345; //ustawiam sobie taka wartosc PID, ktora wykorzystuje jako warunek, zeby SwapPages() nie podmienialo stron
 	}
-
-	Frames[stronica].free = 0;
-
-	setFrameOrder(process->page_table->at(stronica).frame);
-
 	return 1;
 }
 
 std::string MemoryManager::Read(int adress, int range) {
 	std::string str;
 	for (int i = 0; i < range; i++) str += RAM[adress + i];
-		return str;
+	return str;
 }
 
 int MemoryManager::SwapPages(std::vector<PageTableData>* page_table, int pageNumber, int PID)
@@ -299,7 +298,7 @@ void MemoryManager::setFrameOrder(int frame)
 	{
 		return;
 	}
-	for (std::list<int>::iterator it = FrameOrder.begin(); it != FrameOrder.end(); it ++)
+	for (std::list<int>::iterator it = FrameOrder.begin(); it != FrameOrder.end(); it++)
 	{
 		if (*it == frame)
 		{

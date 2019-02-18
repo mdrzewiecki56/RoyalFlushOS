@@ -59,7 +59,7 @@ void intro()
 
 int main()
 {
-//	intro();
+	intro();
 	
 	BetterShell shell;
 	shell.initialize();

@@ -8,7 +8,6 @@
 #include "ProcessManager.h"
 #include "Memory.h"
 #include "PCB.h"
-#include "Shell.h"
 #include <memory>
 
 class Interpreter

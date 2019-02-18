@@ -157,6 +157,9 @@
     <Text Include="silnia.txt" />
     <Text Include="testowy.txt" />
   </ItemGroup>
+  <ItemGroup>
+    <Media Include="..\..\..\..\..\Desktop\intro.wav" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

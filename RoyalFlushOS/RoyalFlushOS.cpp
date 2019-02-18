@@ -10,6 +10,10 @@
 #include <windows.h>
 #include <iostream>
 #include <fstream>
+#include <algorithm>
+#include <filesystem>
+#include <windows.h>
+
 
 void read_from_file(std::string file_name)
 {

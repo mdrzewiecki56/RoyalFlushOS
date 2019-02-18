@@ -5,7 +5,12 @@
 #include <string>         // std::string
 #include <stdio.h>
 #include <ctype.h>
-
+#include <windows.h>
+#include <iostream>
+#include <fstream>
+#include <algorithm>
+#include <filesystem>
+#include <windows.h>
 BetterShell::BetterShell()
 {
 	this->mem->start();

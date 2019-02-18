@@ -40,6 +40,11 @@ private:
 
 	/// PROCESS
 	void wait();
+	//filenames
+	void fn() {
+		std::cout << "testowy.txt, nwd.txt, silnia.txt, pamiec.txt, pliki.txt, cpkp.txt, procent.txt" << std::endl;
+	}
+	//
 	void cp();
 	void rp();
 	void dlist();

@@ -91,27 +91,6 @@
     <Text Include="dummy.txt">
       <Filter>Resource Files</Filter>
     </Text>
-    <Text Include="1silnia.txt">
-      <Filter>Resource Files</Filter>
-    </Text>
-    <Text Include="2pliki.txt">
-      <Filter>Resource Files</Filter>
-    </Text>
-    <Text Include="3cpkp.txt">
-      <Filter>Resource Files</Filter>
-    </Text>
-    <Text Include="0testowy.txt">
-      <Filter>Resource Files</Filter>
-    </Text>
-    <Text Include="2pamiec.txt">
-      <Filter>Resource Files</Filter>
-    </Text>
-    <Text Include="1nwd.txt">
-      <Filter>Resource Files</Filter>
-    </Text>
-    <Text Include="4procent.txt">
-      <Filter>Resource Files</Filter>
-    </Text>
     <Text Include="1.txt">
       <Filter>Resource Files</Filter>
     </Text>
@@ -134,6 +113,27 @@
       <Filter>Resource Files</Filter>
     </Text>
     <Text Include="8.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+    <Text Include="nwd.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+    <Text Include="testowy.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+    <Text Include="silnia.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+    <Text Include="pamiec.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+    <Text Include="pliki.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+    <Text Include="cpkp.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+    <Text Include="procent.txt">
       <Filter>Resource Files</Filter>
     </Text>
   </ItemGroup>

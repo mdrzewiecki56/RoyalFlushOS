@@ -510,7 +510,6 @@ void BetterShell::credits()
 	std::cout << "Interpreter - Maciej Drzewiecki\n" << std::endl;
 	std::cout << "Virtual Memory - Maciej Anglart\n" << std::endl;
 	std::cout << "RAM Memory - Michal Najborowski\n" << std::endl;
-	std::cout << "Semaphores - Wojciech Mlynczak\n" << std::endl;
 }
 
 // Exit

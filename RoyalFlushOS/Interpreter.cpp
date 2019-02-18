@@ -51,6 +51,8 @@ std::pair<int, int>  Interpreter::prepareCommand(std::string &command)
 		std::make_pair("DV",std::make_pair(3,2)),	//Dzielenie
 		std::make_pair("DR",std::make_pair(4,1)),	//Dekrementacja
 		std::make_pair("IR",std::make_pair(5,1)),	//Inkrementacja
+		std::make_pair("MD",std::make_pair(21,2)),	//Modulo
+
 		//Przypisywanie wartosci
 		std::make_pair("LO",std::make_pair(6,2)),	//Zapisywanie do rejestru
 		//Operacje na plikach
@@ -125,7 +127,7 @@ std::string Interpreter::getArguments(std::pair<int, int> parameters)
 		}
 
 	}
-	std::cout << "Argumenty:" << arg1 << "," <<arg2 << ","<<arg3 << "," << std::endl;
+	//std::cout << "Argumenty:" << arg1 << "," <<arg2 << ","<<arg3 << "," << std::endl;
 	return (arg1 + arg2 + arg3);
 }
 
@@ -364,6 +366,49 @@ void Interpreter::increment(std::string address)
 	else if (address == "DX")
 		pcb->reg4++;
 }
+//Modulo
+void Interpreter::modulo(std::string reg, int value)
+{
+	if (reg == "AX")
+		pcb->reg1 %= value;
+	else if (reg == "BX")
+		pcb->reg2 %= value;
+	else if (reg == "CX")
+		pcb->reg3 %= value;
+	else if (reg == "DX")
+		pcb->reg4 %= value;
+
+}
+
+void Interpreter::modulo(std::string reg, std::string address)
+{
+
+	int value = 0;
+	if (address == "AX")
+		value = pcb->reg1;
+	else if (address == "BX")
+		value = pcb->reg2;
+	else if (address == "CX")
+		value = pcb->reg3;
+	else if (address == "DX")
+		value = pcb->reg4;
+	else
+	{
+		std::string sOutput = std::regex_replace(address, std::regex(R"([\D])"), "");
+		int value = std::stoi(mm->Get(this->pcb, std::stoi(sOutput)));
+	}
+
+	if (reg == "AX")
+		pcb->reg1 %= value;
+	else if (reg == "BX")
+		pcb->reg2 %= value;
+	else if (reg == "CX")
+		pcb->reg3 %= value;
+	else if (reg == "DX")
+		pcb->reg4 %= value;
+
+}
+
 //Przypisywanie wartosci
 void Interpreter::load(std::string reg, int value)
 {
@@ -583,6 +628,15 @@ void Interpreter::selectFunction(const std::pair<int, int >&  CommandParameters,
 	case 20://JZ = Skok jesli zero gdzies
 		jumpIfZero(Arguments[0], std::stoi(Arguments[1]));
 		break;
+	case 21://MD - modulo
+		if (Arguments[1][0] != '[' && Arguments[1][1] != 'X')
+		{
+			value = std::stoi(Arguments[1], nullptr);
+			modulo(Arguments[0], value);
+		}
+		else
+			modulo(Arguments[0], Arguments[1]);
+		break;
 	case 98:
 		break;
 		//INNE
@@ -611,7 +665,7 @@ bool Interpreter::interpretation()
 
 	selectFunction(prep, args);
 	pcb->real_time++;
-	//printState();
+	printState();
 	if (prep.first == 98)
 	{
 		this->pcb->set_command_counter(0);

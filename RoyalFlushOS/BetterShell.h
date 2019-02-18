@@ -39,6 +39,7 @@ private:
 	void show_swapfile();
 
 	/// PROCESS
+	void wait();
 	void cp();
 	void rp();
 	void dlist();
@@ -64,5 +65,6 @@ public:
 	void loop();
 	void read_command();
 	void run_command();
+	
 };
 

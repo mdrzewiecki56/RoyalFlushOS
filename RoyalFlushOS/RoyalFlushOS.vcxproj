@@ -125,7 +125,6 @@
     <ClInclude Include="ProcessManager.h" />
     <ClInclude Include="Scheduler.h" />
     <ClInclude Include="Semaphore.h" />
-    <ClInclude Include="Shell.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BetterShell.cpp" />
@@ -139,7 +138,6 @@
     <ClCompile Include="ProcessManager.cpp" />
     <ClCompile Include="Scheduler.cpp" />
     <ClCompile Include="Semaphore.cpp" />
-    <ClCompile Include="Shell.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="1.txt" />

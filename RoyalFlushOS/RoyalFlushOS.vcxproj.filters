@@ -42,9 +42,6 @@
     <ClInclude Include="Semaphore.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Shell.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="BetterShell.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -75,9 +72,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Semaphore.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Shell.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="RoyalFlushOS.cpp">

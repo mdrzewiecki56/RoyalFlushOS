@@ -21,8 +21,10 @@ void Scheduler::add(PCB * nowyproces)
 
 	real_time_from_process = this->pr_queue.top()->real_time;
 	predicted_time_from_process = this->pr_queue.top()->predicted_time;
-	this->pr_queue.top()->predicted_time = (int)((0.5*real_time_from_process) + ((1 - 0.5)*predicted_time_from_process)); std::cout << "predicted time done\n";
-	this->pr_queue.top()->real_time = 0; std::cout << "real time done\n";//czyscimy bo to juz nie aktualne;
+	this->pr_queue.top()->predicted_time = (int)((0.5*real_time_from_process) + ((1 - 0.5)*predicted_time_from_process)); 
+	//std::cout << "predicted time done\n";
+	this->pr_queue.top()->real_time = 0;
+	//std::cout << "real time done\n";//czyscimy bo to juz nie aktualne;
 
 	if ((this->pr_queue.top()->name == "dummy")) {
 		this->pr_queue.top()->predicted_time = 999999999;
@@ -126,7 +128,7 @@ Scheduler::Scheduler()
 }
 void Scheduler::print_queue() {
 	std::priority_queue <PCB*, std::vector<PCB*>, PCB> to_print = pr_queue;
-	std::cout << "This is the queue of processes with ready state: " << "\n";
+	std::cout << "This is the queue of processes with ready state (first process is running): " << "\n";
 	while (!to_print.empty()) {
 		std::cout << to_print.top()->name << " " << "T=" << to_print.top()->predicted_time << ",";
 		to_print.pop();

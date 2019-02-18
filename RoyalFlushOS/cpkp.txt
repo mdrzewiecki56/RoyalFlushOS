@@ -1,1 +1,1 @@
-CP p1 arytmetyka.txt CP p2 Factorial.txt CP p3 program.txt CP p4 add_from_file.txt KP p4 SP 
+CP p1 arytmetyka.txt CP p50 Factorial.txt CP p52 program.txt CP p51 add_from_file.txt KP p51 SP 

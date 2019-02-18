@@ -53,48 +53,6 @@ void BetterShell::read_command()
 	parsed_command.push_back(temporary);
 }
 
-void BetterShell::run_command()
-{
-	std::string komenda = parsed_command[0];
-	for (std::string::size_type i = 0; i < komenda.length(); ++i) {
-		komenda[i]=toupper(komenda[i]);
-	};
-
-	if (komenda == "CF") { cf(); }
-	else if (komenda == "RF") { rf(); }
-	else if (komenda == "WF") { wf(); }
-	else if (komenda == "DF") { df(); }
-	else if (komenda == "RN") { rn(); }
-	else if (komenda == "FD") { fd(); }
-	else if (komenda == "DD") { dd(); }
-	else if (komenda == "SD") { sd(); }
-
-	/// MEMORY
-	else if (komenda == "DMEMORY") { dmemory(); }
-	//else if (komenda == "SHOWPT") { show_paget(); }
-	else if (komenda == "FIFO") { show_fifo(); }
-	else if (komenda == "DSF") { show_swapfile(); }
-	/// PROCESS
-	else if (komenda == "CP") { cp(); }
-	else if (komenda == "WP") { wait(); }
-	else if (komenda == "RP") { rp(); }
-	else if (komenda == "DLIST") { dlist(); }
-	else if (komenda == "DPCB") { dpcb(); }
-	else if (komenda == "DPROCESS") { dprocess(); }
-	else if (komenda == "MONSIEUR") { recognation(); }
-	//KOLEJKA
-	else if (komenda == "PQ") { pq(); }
-	else if (komenda == "RUNTIME") { runtime(); }
-	/// INTERPRETER
-	else if (komenda == "GO") { go(); }
-	/// HELP
-	else if (komenda == "CLS") { cls(); }
-	else if (komenda == "HELP") { help(); }
-	else if (komenda == "CREDITS") { credits(); }
-	else if (komenda == "EXIT") { exit(); }
-	else { other(); }
-}
-
 // Create file
 void BetterShell::cf()
 {
@@ -381,6 +339,8 @@ void BetterShell::cp()
 // Run process
 void BetterShell::rp()
 {
+	this->mng->get_process(parsed_command[1]).get()->set_state(Ready);
+
 	if (parsed_command.size() == 2) {
 		PCB* wsk = scheduler.first; //TEST
 
@@ -469,6 +429,12 @@ void BetterShell::pq()
 	}
 }
 
+void BetterShell::fn() {
+
+	
+	std::cout << "testowy.txt, nwd.txt, silnia.txt, pamiec.txt, pliki.txt, cpkp.txt, procent.txt" << std::endl;
+	
+}
 // Runtime
 void BetterShell::runtime()
 {
